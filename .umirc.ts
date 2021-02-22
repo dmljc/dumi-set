@@ -4,8 +4,8 @@ const name = 'dumi-site';
 
 export default defineConfig({
     title: 'dumi-site',
-    favicon: '/images/logo.jpeg',
-    logo: '/images/logo.jpeg',
+    favicon: `/${name}/images/favicon.svg`,
+    logo: `/${name}/images/logo.png`,
     outputPath: 'dist',
     mode: 'site',
     hash: true,
