@@ -6,7 +6,7 @@ export default defineConfig({
     title: 'dumi-site',
     favicon: '/images/logo.jpeg',
     logo: '/images/logo.jpeg',
-    outputPath: 'docs-dist',
+    outputPath: 'dist',
     mode: 'site',
     hash: true,
     base: `/${name}/`,
@@ -21,7 +21,7 @@ export default defineConfig({
             { title: '每日一题', path: '/questions' },
             { title: 'GitHub', path: 'https://github.com/umijs/dumi' },
             { title: '更新日志', path: '/logs' },
-        ]
+        ],
     },
     // more config: https://d.umijs.org/config
 });
