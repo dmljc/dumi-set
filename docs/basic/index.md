@@ -228,3 +228,55 @@ Object.prototype.toString.call([]); // "[object Array]"
 Object.prototype.toString.call(new Date()); // "[object Date]"
 Object.prototype.toString.call(console.log); // "[object Function]"
 ```
+
+## 前端模块化
+
+模块化的开发方式可以提高代码复用率，方便进行代码的管理。通常一个文件就是一个模块，有自己的作用域，
+只向外暴露特定的变量和函数。目前流行的 js 模块化规范有 CommonJS、AMD、CMD 以及 ES6 的模块系统。
+
+### CommonJS
+
+Node.js 是 CommonJS 规范的主要实践者，它有四个重要的环境变量为模块化的实现提供支持：module、exports、require、global。实际使用时，用 module.exports 定义当前模块对外输出的接口（不推荐直接用 exports），用 require 加载模块。
+
+```js
+// 定义模块 math.js
+let count = 0;
+const add = (a, b) => a + b;
+
+module.exports = {
+    // 对外暴露的函数、变量
+    add,
+    count,
+};
+
+// 引用自定义的模块
+let math = require('./math');
+math.add(1, 2);
+```
+
+CommonJS 用 `同步`的方式加载模块。在服务端，模块文件都存在本地磁盘，读取非常快，所以这样做不会有问题。但是在浏览器端，限于网络原因，更合理的方案是使用异步加载。
+
+### AMD
+
+AMD 规范采用`异步`方式加载模块，模块的加载不影响它后面语句的运行。所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完成之后，这个回调函数才会运行。这里介绍用 require.js 实现 AMD 规范的模块化：用 require.config() 指定引用路径等，用 define() 定义模块，用 require() 加载模块。
+
+```js
+// 网页中引入require.js及main.js
+<script src="js/require.js" data-main="js/main"></script>;
+
+// main.js 入口文件/主模块，首先用config()指定各模块路径和引用名
+require.config({
+    baseUrl: 'js/lib',
+    paths: {
+        jquery: 'jquery.min',
+        underscore: 'underscore.min',
+    },
+});
+
+// 执行基本操作
+require(['jquery', 'underscore'], function ($, _) {
+    // some code here
+});
+```
+
+<!-- https://juejin.cn/post/6844903576309858318 -->
