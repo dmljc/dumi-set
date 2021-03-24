@@ -16,11 +16,11 @@ export default defineConfig({
         'zh-CN': [
             { title: '基础', path: '/basic' },
             { title: '框架', path: '/frame' },
+            { title: '前端工具', path: '/utils' },
             { title: '浏览器', path: '/browser' },
             { title: '可视化', path: '/visual' },
             { title: '每日一题', path: '/questions' },
             { title: 'GitHub', path: 'https://github.com/umijs/dumi' },
-            { title: '更新日志', path: '/logs' },
         ],
     },
     // more config: https://d.umijs.org/config
