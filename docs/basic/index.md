@@ -6,118 +6,18 @@ toc: menu
 
 ## 数据类型
 
-JavaScript 是一种弱类型脚本语言，所谓弱类型指的是定义变量时，不需要指定类型，在程序运行过程中会自动判断类型。
+JavaScript 是一种弱类型脚本语言，在定义变量时不需要指定类型，在程序运行过程中会自动判断类型。
 
-JavaScript 中分为八种内置类型，七种内置类型又分为两大类型：基本类型和引用类型。
+> 涉及面试题：原始类型有哪几种？null 是对象嘛？
 
-基本类型有七种： `Number`，`String`，`Boolean`，`Undefined`，`Null`，`BigInt`，`Symbol`
+JavaScript 内置类型分为两大类型：**基本类型** 和 **引用类型**。
 
-### BigInt
-
-JavaScript 所有数字都保存成 64 位浮点数，这给数值的表示带来了两大限制：
-
--   数值的精度只能到 53 个二进制位，大于这个范围的整数，JavaScript 是无法精确表示的，这使得 JavaScript 不适合进行科学和金融方面的精确计算。
-
--   大于或等于 2 的 1024 次方的数值，JavaScript 无法表示，会返回 Infinity（无穷大）。
-
-ES2020 引入了一种新的数据类型 BigInt（大整数），来解决这个问题。BigInt 只用来表示整数，没有位数的限制，任何位数的整数都可以精确表示。
-
-创建 BigInt 的方式有两种：
-
--   在一个整数字面量后面加 n
--   调用 BigInt 函数，该函数从字符串、数字等中生成 BigInt
-
-```js
-const bigint1 = 12n;
-const bigint2 = BigInt('12');
-const bigint3 = BigInt(12);
-
-bigint1 === bigint2; // true
-bigint1 === bigint3; // true
-bigint2 === bigint3; // true
-```
-
-为了与 Number 类型区别，BigInt 类型的数据必须添加后缀 n
-
-```js
-1234; // 普通整数
-1234n; // BigInt
-
-42n === 42; // false
-42n == 42; // true
-
-1n + 2n; // 3n
-```
-
-BigInt 和 Number 类型之间的转换
-
-```js
-const big = 12n;
-const num = 12;
-
-const numToBig = BigInt(num); // 12n
-big === numToBig; // true
-
-const bigToNum = Number(big); // 12
-bigToNum === num; // true
-```
-
-当在 if 或其他布尔运算中时，BigInt 的行为类似于 Number
-
-例如，在 if 中，BigInt 0n 为 false，其他值为 true：
-
-```js
-if (0n) {
-    // 永远不会执行
-}
-```
-
-### Symbol
-
-ES5 的对象属性名都是字符串，这容易造成 `属性名的冲突`。
-
-比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突，表示独一无二的值。这就是 ES6 引入 Symbol 的原因。
-
-Symbol 函数前不能使用 new 命令，否则会报错。 由于 Symbol 值不是对象，所以不能添加属性:
-
-```js
-let s = Symbol();
-
-typeof s; // "symbol"
-
-let sym = new Symbol(); // TypeError: Symbol is not a constructor
-```
-
-Symbol 函数的参数只是表示对当前 Symbol 值的描述，因此相同参数的 Symbol 函数的返回值是不相等的:
-
-```js
-// 没有参数的情况
-let s1 = Symbol();
-let s2 = Symbol();
-
-s1 === s2; // false
-
-// 有参数的情况
-let s1 = Symbol('foo');
-let s2 = Symbol('foo');
-
-s1 === s2; // false
-```
-
-Symbol 值不能与其他类型的值进行运算，会报错:
-
-```js
-let sym = Symbol('My symbol');
-
-'your symbol is ' +
-    sym // TypeError: can't convert symbol to string
-    `your symbol is ${sym}`; // TypeError: can't convert symbol to string
-```
+基本类型有七种： `Number`，`String`，`Boolean`，`Undefined`，`Null`，[Symbol](/basic/es6#symbol)，[BigInt](/basic/es6#bigint)
 
 引用类型包括： `Object` ， `Array` ， `Date` ， `function` ，对象在使用过程中会遇到浅拷贝和深拷贝的问题。
 
 ```js
-// 下列代码会出现：对象a的name属性被误改的bug。
+// 下列代码会出现：对象 a 的 name 属性被误改的 bug
 
 let a = {
     name: 'zfc',
@@ -128,7 +28,7 @@ b.name = '张芳朝';
 console.log(a.name); // 张芳朝
 console.log(b.name); // 张芳朝
 
-// 解决方式：先对a拷贝一份数据，再赋值给b，即可。
+// 解决方式：先对 a 拷贝一份数据，再赋值给 b，即可
 
 let a = {
     name: 'zfc-zfc',
@@ -142,6 +42,8 @@ console.log(a.name); // '张芳朝-张芳朝'
 
 ### typeof
 
+> typeof 是否能正确判断类型？instanceof 能正确判断对象的原理是什么？
+
 `typeof` 对于基本类型，除了 `null` 都可以显示正确的类型
 
 ```js
@@ -150,7 +52,7 @@ typeof '1'; // 'string'
 typeof undefined; // 'undefined'
 typeof true; // 'boolean'
 typeof Symbol(); // 'symbol'
-typeof b; // b 没有声明，但是还会显示 undefined
+typeof b; //  b 没有声明，但是还会显示 'undefined'
 ```
 
 对于 `null` 来说，虽然它是基本类型，但是会显示 `object` ，这是一个存在很久了的 `Bug`
@@ -159,11 +61,11 @@ typeof b; // b 没有声明，但是还会显示 undefined
 typeof null; // 'object'
 ```
 
-为什么会出现这种 `Bug`呢？
+**为什么会出现这种 `Bug`呢？**
 
 因为在 JS 的最初版本中，使用的是 32 位系统，为了性能考虑使用低位存储了变量的类型信息， `000` 开头表是对象，然而 `null` 表示为全零，所以将它错误的判断为 `object` 。虽然现在的内部类型判断代码已经变了，但是对于这个 Bug 却是一直流传下来。
 
-`typeof` 对于对象，除了函数都会显示 `object`
+`typeof` 对于引用类型，除了函数都会显示 `object`
 
 ```js
 typeof []; // 'object'
@@ -174,7 +76,7 @@ typeof console.log; // 'function'
 
 ### instanceof
 
-`instanceof` 可以正确的判断引用类型的类型，因为内部机制是通过判断对象的原型链中是不是能找到 构造函数的 prototype 属性。
+`instanceof` 可以正确的判断引用类型的类型，因为内部机制是 **通过判断对象的原型链中能否找到 构造函数的 prototype 属性**。
 
 ```js
 // object instanceof constructor    左边是要测试的对象，右边是构造函数
@@ -186,15 +88,17 @@ function() {} instanceof Function   // true
 function() {} instanceof Object     // true
 ```
 
-instanceof 实现原理：
+**instanceof 实现原理：**
 
 ```js
 function instanceof(left, right) {
-    // left 表示左边的object，right 表示右边的constructor
+    // left 表示 instanceof 左边的 object，right 表示右边 constructor
     // 获得对象的原型
     left = left.__proto__;
+
     // 获得类型的原型
     let prototype = right.prototype;
+
     // 判断对象的类型是否等于类型的原型
     while (true) {
         if (left === null) {
@@ -210,9 +114,7 @@ function instanceof(left, right) {
 
 ### Object.prototype.toString.call(xx)
 
-那么，如何获得一个变量的正确类型呢？
-
-`使用 Object.prototype.toString.call(xx)，可以获得变量的正确类型。`
+使用 `Object.prototype.toString.call(xx)` 可以获得变量的正确类型。
 
 ```js
 Object.prototype.toString.call(12); // "[object Number]"
@@ -229,238 +131,144 @@ Object.prototype.toString.call(new Date()); // "[object Date]"
 Object.prototype.toString.call(console.log); // "[object Function]"
 ```
 
-## 前端模块化
+> 涉及面试题：基本类型和引用类型的不同之处？函数参数是对象会发生什么问题？
 
-什么是前端模块化？
+基本类型和引用类型不同的是: 基本类型存储的是值，引用类型存储的是地址（指针）。当你创建了一个对象类型的时候，计算机会在内存中帮我们开辟一个空间来存放值，但是我们需要找到这个空间，这个空间会拥有一个地址（指针）。
 
-模块化的开发方式可以提高代码复用率，方便进行代码的管理。通常一个文件就是一个模块，有自己的作用域，
-只向外暴露特定的变量和函数。目前流行的 js 模块化规范有 CommonJS、 ES6 的模块系统。
+## 数组去重
 
-为什么会有 CommonJs 和 Es Module 呢?
-
-在早期 JavaScript 模块这一概念，都是通过 script 标签引入 js 文件代码。当然这写基本简单需求没有什么问题，但当我们的项目越来越庞大时，我们引入的 js 文件就会越多，这时就会出现以下问题：
-
--   js 文件作用域都是顶层，这会造成变量污染
--   js 文件多，变得不好维护
--   js 文件依赖问题，稍微不注意顺序引入错，代码全报错
-
-为了解决以上问题 JavaScript 社区出现了 CommonJs，CommonJs 是一种模块化的规范，包括现在的 NodeJs 里面也采用了部分 CommonJs 语法在里面。那么在后来 Es6 版本正式加入了 Es Module 模块，这两种都是解决上面问题，那么都是解决什么问题呢。
-
--   解决变量污染问题，每个文件都是独立的作用域，所以不存在变量污染
--   解决代码维护问题，一个文件里代码非常清晰
--   解决文件依赖问题，一个文件里可以清楚的看到依赖了那些其它文件
-
-### CommonJS 导出
-
-CommonJs 中使用 module.exports 导出变量及函数，也可以导出任意类型的值，看如下案例。
+**1、双重 for 循环 (如果前一个值与后一个值相等，那么就去掉后一个值)**
 
 ```js
-// 导出一个对象
-module.exports = {
-    name: '蛙人',
-    age: 24,
-    sex: 'male',
+const arr = [1, 'a', 'a', 'b', 'd', 'e', 'e', 1, 0];
+
+let test = (arr) => {
+    for (let i = 0, len = arr.length; i < len; i++) {
+        for (let j = i + 1, len = arr.length; j < len; j++) {
+            if (arr[i] === arr[j]) {
+                arr.splice(j, 1);
+            }
+        }
+    }
+    return arr;
+};
+test(arr); // [1, "a", "b", "d", "e", 0]
+```
+
+2、for...of + includes()
+
+双重 for 循环的升级版，外层用 for...of 语句替换 for 循环，把内层循环改为 includes()
+
+先创建一个空数组，当 includes() 返回 false 的时候，就将该元素 push 到空数组中
+
+类似的，还可以用 indexOf() 来替代 includes()
+
+```js
+let arr = [1, 'a', 'a', 'b', 'd', 'e', 'e', 1, 0];
+
+let test = (arr) => {
+    let result = [];
+    for (let i of arr) {
+        !result.includes(i) && result.push(i);
+    }
+    return result;
 };
 
-// 导出任意值
-module.exports.name = '蛙人';
-module.exports.sex = null;
-module.exports.age = undefined;
+test(arr); // [1, "a", "b", "d", "e", 0]
 ```
 
-导出也可以省略 module 关键字，直接写 exports 导出也可以，看如下案例。
+3、Array.filter() + indexOf
 
 ```js
-exports.name = '蛙人';
-exports.sex = 'male';
-```
+let arr = [1, 1, 2, 2, 2, 6];
 
-注意：如果使用 exports 导出单个值之后，就不能在导出一个对象值，这只会修改 exports 的对象改变，然而修改无效，最终导出还是 name，和 sex，因为最终的导出是由 module.exports 决定的。
-
-```js
-exports.name = '蛙人';
-exports.sex = 'male';
-exports = {
-    name: '蛙人',
-};
-```
-
-上面 example 中，这种情况会改变对象的引用值则导出无效，所以最后导出的还是 name，sex。
-
-混合导出，exports 和 module.exports 可以同时使用，不会存在问题。
-
-```js
-exports.name = '蛙人';
-module.exports.age = 24;
-```
-
-CommonJs 中使用 require 语法可以导入，如果想要单个的值，可以通过解构对象来获取。
-
-```js
-// index.js
-module.exports.name = '蛙人';
-module.exports.age = 24;
-
-let data = require('./index.js');
-console.log(data); // { name: "蛙人", age: 24 }
-```
-
-不管是 CommonJs 还是 Es Module 都不会重复导入，就是只要该文件内加载过一次这个文件了，我再次导入一次是不会生效的。
-
-```js
-let data = require('./index.js');
-let data = require('./index.js'); // 不会在执行了
-```
-
-CommonJs 支持动态导入，什么意思呢，就是可以在语句中，使用 require 语法，来看如下案例。
-
-```js
-let lists = ['./index.js', './config.js'];
-lists.forEach((url) => require(url)); // 动态导入
-
-if (lists.length) {
-    require(lists[0]); // 动态导入
-}
-```
-
-CommonJs 导入的值是拷贝的，所以可以修改拷贝值，但这会引起变量污染，一不小心就重名。
-
-```js
-// index.js
-let num = 0;
-module.exports = {
-    num,
-    add() {
-        ++num;
-    },
+let test = () => {
+    return arr.filter((item, index, array) => array.indexOf(item) === index);
 };
 
-let { num, add } = require('./index.js');
-console.log(num); // 0
-add();
-console.log(num); // 0
-num = 10;
+test(arr); // [1, 2, 6]
 ```
 
-上面 example 中，可以看到 exports 导出的值是值的拷贝，更改完++ num 值没有发生变化，并且导入的 num 的值我们也可以进行修改
+4、for...of + Object
 
-### ES6 Module
-
-在 Es Module 中导出分为两种，单个导出(export)、默认导出(export default)，单个导出在导入时不像 CommonJs 一样直接把值全部导入进来了，Es Module 中可以导入我想要的值。那么默认导出就是全部直接导入进来，当然 Es Module 中也可以导出任意类型的值
+首先创建一个空对象，然后用 for 循环遍历。利用对象的属性不会重复这一特性，校验数组元素是否重复。
 
 ```js
-// 导出变量
-export const name = "蛙人"
-export const age = 24
+let arr = [1, 'a', 'a', 'b', 'd', 'e', 'e', 1, 0];
 
-// 导出函数也可以
-export function fn() {}
-export const test = () => {}
-
-// 另一种形式导出
-const sex = "male"
-export sex
-
-// 如果有多个的话
-const name = "蛙人"
-const sex = "male"
-export { name, sex }
-```
-
-可以使用 export 和 export default 同时使用并且互不影响，只需要在导入时地方注意，如果文件里有混合导入，则必须先导入默认导出的，在导入单个导入的值。
-
-```js
-export const name = "蛙人"
-export const age = 24
-
-export default {
-    fn() {}，
-    msg: "hello 蛙人"
-}
-```
-
-Es Module 使用的是 import 语法进行导入。如果要单个导入则必须使用花括号{} ，注意：这里的花括号跟解构不一样。
-
-```js
-// index,js
-export const name = '蛙人';
-export const age = 24;
-
-import { name, age } from './index.js';
-console.log(name, age); // "蛙人" 24
-
-// 如果里面全是单个导出，我们就想全部直接导入则可以这样写
-import * as all from './index.js';
-console.log(all); // {name: "蛙人", age: 24}
-```
-
-混合导入，则该文件内用到混合导入，import 语句必须先是默认导出，后面再是单个导出，顺序一定要正确否则报错
-
-```js
-// index,js
-export const name = '蛙人';
-export const age = 24;
-export default {
-    msg: '蛙人',
+let test = () => {
+    let result = [];
+    let obj = {};
+    for (let i of arr) {
+        if (!obj[i]) {
+            result.push(i);
+            obj[i] = 1;
+        }
+    }
+    return result;
 };
 
-import msg, { name, age } from './index.js';
-console.log(msg); // { msg: "蛙人" }
+test(); // [1, "a", "b", "d", "e", 0]
 ```
 
-上面 example 中，如果导入的名称不想跟原本地名称一样，则可以起别名。
+5、ES6 Set
 
 ```js
-// index,js
-export const name = '蛙人';
-export const age = 24;
-export default {
-    msg: '蛙人',
-};
+let arr = [1, 'a', 'a', 'b', 'd', 'e', 'e', 1, 0];
 
-import { default as all, name, age } from './index.js';
-console.log(all); // { msg: "蛙人" }
+let test = (arr) => Array.from(new Set(arr));
+
+test(arr); // [1, "a", "b", "d", "e", 0]
 ```
 
-export 导出的值是值的引用，并且内部有映射关系，这是 export 关键字的作用。而且导入的值，不能进行修改也就是只读状态。
+## 原型和原型链
+
+每个函数都有 `prototype` 属性，除了 `Function.prototype.bind()` ，该属性指向原型。
+
+每个对象都有 `__proto__` 属性，指向了创建该对象的构造函数的原型。其实这个属性指向了 `[[prototype]]` ，但是 `[[prototype]]` 是内部属性，我们并不能访问到，所以使用 `_proto_` 来访问。
+
+对象可以通过 `__proto__` 来寻找不属于该对象的属性， `__proto__` 将对象连接起来组成了原型链。
+
+如果你想更进一步的了解原型，可以仔细阅读 [深度解析原型中的各个难点](https://github.com/KieSun/Blog/issues/2) 。
+
+## 执行上下文
+
+当执行 JS 代码时，会产生三种执行上下文
+
+-   全局执行上下文
+-   函数执行上下文
+-   eval 执行上下文（耗性能）
+
+每个执行上下文中都有三个重要的属性
+
+-   变量对象（VO），包含变量、函数声明和函数的形参，该属性只能在全局上下文中访问
+-   作用域链（JS 采用词法作用域，也就是说变量的作用域是在定义时就决定了）
+-   this 指向
 
 ```js
-// index.js
-export let num = 0;
-export function add() {
-    ++num;
+console.log(a) // undefined
+var a = 100
+
+fn('zhangsan') // 'zhangsan' 20
+function fn(name) {
+    age = 20;
+    console.log(name, age);
+    var age;
 }
 
-import { num, add } from './index.js';
-console.log(num); // 0
-add();
-console.log(num); // 1
-num = 10; // 抛出错误
+console.log(b); // 这里报错
+// Uncaught ReferenceError: b is not defined
+b = 100...
 ```
 
-就是 Es Module 语句``import只能声明在该文件的最顶部，不能动态加载语句，Es Module`语句运行在代码编译时。
+对于上述代码，执行栈中有两个上下文：全局上下文和函数 `fn` 上下文。
 
-```js
-if (true) {
-    import xxx from 'XXX'; // 报错
-}
-```
+我们来看下上面的面试小题目，为什么 a 是 undefined，而 b 却报错了，实际 JS 在代码执行之前，要「全文解析」，发现 var a，知道有个 a 的变量，存入了执行上下文，而 b 没有找到 var 关键字，这时候没有在执行上下文提前「占位」，所以代码执行的时候，提前报到的 a 是有记录的，只不过值暂时还没有赋值，即为 undefined，而 b 在执行上下文没有找到，自然会报错（没有找到 b 的引用）。
 
-### CommonJs 和 Es Module 的区别
+另外，一个函数在执行之前，也会创建一个 函数执行上下文 环境，跟 全局上下文 差不多，不过 函数执行上下文 中会多出 this arguments 和函数的参数。参数和 arguments 好理解，这里的 this 咱们需要专门讲解。
 
-CommonJs
+总结一下：
 
--   CommonJs 可以动态加载语句，代码发生在运行时
--   CommonJs 混合导出，还是一种语法，只不过不用声明前面对象而已，当我导出引用对象时之前的导出就被覆盖了
--   CommonJs 导出值是拷贝，可以修改导出的值，这在代码出错时，不好排查引起变量污染
-
-Es Module
-
--   Es Module 是静态的，不可以动态加载语句，只能声明在该文件的最顶部，代码发生在编译时
--   Es Module 混合导出，单个导出，默认导出，完全互不影响
--   Es Module 导出是引用值之前都存在映射关系，并且值都是可读的，不能修改
-
-<!-- https://juejin.cn/post/6844903576309858318 -->
-
-<!--  升级参考下文-->
-<!-- https://juejin.cn/post/6938581764432461854 -->
+-   范围：一段 `<script>` 、js 文件或者一个函数
+-   全局上下文：变量定义，函数声明
+-   函数上下文：变量定义，函数声明，this，arguments

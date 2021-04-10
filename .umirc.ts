@@ -20,7 +20,10 @@ export default defineConfig({
             { title: '浏览器', path: '/browser' },
             { title: '可视化', path: '/visual' },
             { title: '每日一题', path: '/questions' },
-            { title: 'GitHub', path: 'https://github.com/umijs/dumi' },
+            {
+                title: 'JS Bin',
+                path: 'https://jsbin.com/punigik/edit?js,console',
+            },
         ],
     },
     // more config: https://d.umijs.org/config
