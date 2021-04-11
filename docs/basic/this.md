@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# this 和 箭头函数
+# this、calll、new
 
 ## this 关键字
 

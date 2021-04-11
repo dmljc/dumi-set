@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# 工具 Git
+# Git
 
 ## 全能图
 

@@ -1,0 +1,7 @@
+---
+toc: menu
+---
+
+# Linux
+
+todo......
