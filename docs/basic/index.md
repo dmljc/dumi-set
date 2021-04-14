@@ -93,14 +93,13 @@ function() {} instanceof Object     // true
 ```js
 function instanceof(left, right) {
     // left 表示 instanceof 左边的 object，right 表示右边 constructor
-    // 获得对象的原型
-    left = left.__proto__;
+    left = left.__proto__; // 获得对象的原型
 
-    // 获得类型的原型
-    let prototype = right.prototype;
+    let prototype = right.prototype; // 获得类型的原型
 
     // 判断对象的类型是否等于类型的原型
     while (true) {
+        // while(true)作为无限循环，经常在不知道循环次数的时候使用
         if (left === null) {
             return false; //已经找到顶层
         }

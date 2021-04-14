@@ -98,7 +98,7 @@ var b = 'Hello world';
 
 `var` 会产生很多错误，所以在 ES6 中引入了 `let` 。 `let` 不能在声明前使用，但是这并不是常说的 `let` 不会提升， `let` 提升了声明但没有赋值，因为临时死区导致了并不能在声明前使用。
 
-## call, apply, bind
+## call、apply、bind 的使用
 
 首先说下前两者的区别：
 
@@ -143,7 +143,42 @@ b.bind(a, 1, 2)(); // 3
 // 所以我们可以看出，bind 是创建一个新的函数，我们必须要手动去调用。
 ```
 
-## new 关键字
+## call、apply、bind 的实现
+
+> 涉及面试题：call、apply 及 bind 函数内部实现是怎么样的？
+
+首先从以下几点来考虑如何实现这几个函数
+
+-   不传入第一个参数，那么上下文默认为 window
+-   改变了 this 指向，让新的对象可以执行该函数，并能接受参数
+
+那么我们先来实现 call
+
+```js
+Function.prototype.myCall = function (context) {
+    if (typeof this !== 'function') {
+        // this 要调用的函数
+        throw new Error('Error');
+    }
+    context = context || window;
+    context.fn = this;
+    const args = [...arguments].slice(1);
+    const result = context.fn(...args);
+    delete context.fn;
+    return result;
+};
+```
+
+以下是对实现的分析：
+
+-   首先 context 为可选参数，如果不传的话默认上下文为 window
+-   接下来给 context 创建一个 fn 属性，并将值设置为**需要调用的函数**
+-   因为 call 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
+-   然后调用函数并将对象上的函数删除 (fn 只是个临时属性，调用完毕后删除它)
+
+## 实现 new 关键字
+
+> 涉及面试题：new 的原理是什么？通过 new 的方式创建对象和通过字面量创建有什么区别？
 
 -   新生成了一个对象
 -   链接到原型
