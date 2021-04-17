@@ -1,15 +1,16 @@
 import { defineConfig } from 'dumi';
 
-const name = 'dumi-site';
+// const name = 'dumi-site';
 
 export default defineConfig({
     title: 'dumi-site',
-    favicon: `/${name}/images/zfc.png`,
-    logo: `/${name}/images/zfc.png`,
+    favicon: '/images/zfc.png',
+    logo: '/images/zfc.png',
     outputPath: 'dist',
     mode: 'site',
     hash: true,
-    base: `/${name}/`,
+    // base: `/${name}/`,   // 非域名根路径部署时：base 和 publicPath 配置项需改为 仓库名称
+    base: '/',
     // publicPath: `/${name}/`,
     publicPath: '/', // 自定义域名
     locales: [['zh-CN', '中文']],
