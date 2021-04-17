@@ -10,7 +10,8 @@ export default defineConfig({
     mode: 'site',
     hash: true,
     base: `/${name}/`,
-    publicPath: `/${name}/`,
+    // publicPath: `/${name}/`,
+    publicPath: '/', // 自定义域名
     locales: [['zh-CN', '中文']],
     navs: {
         'zh-CN': [
