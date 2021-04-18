@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 缓存机制

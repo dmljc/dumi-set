@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 存储
@@ -9,7 +9,6 @@ toc: menu
 ## cookie，localStorage，sessionStorage，indexDB
 
 我们先来通过表格学习下这几种存储方式的区别
-
 
 |     特性     |                   cookie                   |       localStorage       | sessionStorage |         indexDB          |
 | :----------: | :----------------------------------------: | :----------------------: | :------------: | :----------------------: |
@@ -21,57 +20,57 @@ toc: menu
 
 对于 `cookie`，我们还需要注意安全性。
 
-|   属性    |                             作用                             |
-| :-------: | :----------------------------------------------------------: |
+|   属性    |                              作用                              |
+| :-------: | :------------------------------------------------------------: |
 |   value   | 如果用于保存用户登录态，应该将该值加密，不能使用明文的用户标识 |
-| http-only |            不能通过 JS 访问 Cookie，减少 XSS 攻击            |
-|  secure   |               只能在协议为 HTTPS 的请求中携带                |
-| same-site |    规定浏览器不能在跨域请求中携带 Cookie，减少 CSRF 攻击     |
+| http-only |             不能通过 JS 访问 Cookie，减少 XSS 攻击             |
+|  secure   |                只能在协议为 HTTPS 的请求中携带                 |
+| same-site |     规定浏览器不能在跨域请求中携带 Cookie，减少 CSRF 攻击      |
 
 ## Service Worker
 
-`Service Worker` 是运行在浏览器背后的 `独立线程`，一般可以用来实现 `缓存` 功能。使用 Service Worker的话，传输协议必须为 `HTTPS`。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。
+`Service Worker` 是运行在浏览器背后的 `独立线程`，一般可以用来实现 `缓存` 功能。使用 Service Worker 的话，传输协议必须为 `HTTPS`。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。
 
 Service Worker 实现缓存功能一般分为三个步骤：
 
-- 首先需要先注册 Service Worker
-- 然后监听到 install 事件以后就可以缓存需要的文件
-- 那么在下次用户访问的时候就可以通过拦截请求的方式查询是否存在缓存，存在缓存的话就可以直接读取缓存文件，否则就去请求数据。
+-   首先需要先注册 Service Worker
+-   然后监听到 install 事件以后就可以缓存需要的文件
+-   那么在下次用户访问的时候就可以通过拦截请求的方式查询是否存在缓存，存在缓存的话就可以直接读取缓存文件，否则就去请求数据。
 
-``` js
+```js
 // index.js
 if (navigator.serviceWorker) {
     navigator.serviceWorker
         .register('sw.js')
-        .then(function(registration) {
-            console.log('service worker 注册成功')
+        .then(function (registration) {
+            console.log('service worker 注册成功');
         })
-        .catch(function(err) {
-            console.log('servcie worker 注册失败')
-        })
+        .catch(function (err) {
+            console.log('servcie worker 注册失败');
+        });
 }
 // sw.js
 // 监听 `install` 事件，回调中缓存所需文件
-self.addEventListener('install', e => {
+self.addEventListener('install', (e) => {
     e.waitUntil(
-        caches.open('my-cache').then(function(cache) {
-            return cache.addAll(['./index.html', './index.js'])
-        })
-    )
-})
+        caches.open('my-cache').then(function (cache) {
+            return cache.addAll(['./index.html', './index.js']);
+        }),
+    );
+});
 
 // 拦截所有请求事件
 // 如果缓存中已经有请求的数据就直接用缓存，否则去请求数据
-self.addEventListener('fetch', e => {
+self.addEventListener('fetch', (e) => {
     e.respondWith(
-        caches.match(e.request).then(function(response) {
+        caches.match(e.request).then(function (response) {
             if (response) {
-                return response
+                return response;
             }
-            console.log('fetch source')
-        })
-    )
-})
+            console.log('fetch source');
+        }),
+    );
+});
 ```
 
 打开页面，可以在开发者工具中的 Application 看到 Service Worker 已经启动了!
@@ -85,6 +84,3 @@ self.addEventListener('fetch', e => {
 当我们重新刷新页面可以发现我们缓存的数据是从 Service Worker 中读取的
 
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d67e7882fef4ab0a22542757b20763e~tplv-k3u1fbpfcp-watermark.image)
-
-
-
