@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 类的创建和继承

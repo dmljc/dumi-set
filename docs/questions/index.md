@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 每日一题模块
@@ -7,5 +7,3 @@ toc: menu
 # 可视化
 
 更新中
-
-

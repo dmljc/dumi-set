@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 异步发展史

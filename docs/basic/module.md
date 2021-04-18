@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 前端模块化

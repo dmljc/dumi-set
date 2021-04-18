@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # JavaScript

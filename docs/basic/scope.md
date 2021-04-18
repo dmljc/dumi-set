@@ -1,5 +1,5 @@
 ---
-toc: menu
+toc: content
 ---
 
 # 作用域和闭包
