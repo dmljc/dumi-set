@@ -75,12 +75,12 @@ self.addEventListener('fetch', (e) => {
 
 打开页面，可以在开发者工具中的 Application 看到 Service Worker 已经启动了!
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dacd9c7895d942578c6326dfc3367e22~tplv-k3u1fbpfcp-watermark.image)
+![](/images/browser/render/ServiceWorkers.png)
 
 在 Cache 中也可以发现我们所需的文件已被缓存
 
-![](https://user-gold-cdn.xitu.io/2018/3/28/1626b20dfc4fcd26?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+![](/images/browser/storage/myCache.png)
 
 当我们重新刷新页面可以发现我们缓存的数据是从 Service Worker 中读取的
 
-![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d67e7882fef4ab0a22542757b20763e~tplv-k3u1fbpfcp-watermark.image)
+![](/images/browser/storage/ServiceIndex.png)
