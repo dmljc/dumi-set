@@ -17,11 +17,11 @@ export default defineConfig({
     navs: {
         'zh-CN': [
             { title: '基础', path: '/basic' },
-            { title: '框架', path: '/frame' },
-            { title: '前端工具', path: '/utils' },
             { title: '浏览器', path: '/browser' },
-            { title: '可视化', path: '/visual' },
-            { title: '每日一题', path: '/questions' },
+            { title: '前端工具', path: '/utils' },
+            { title: '框架', path: '/frame' },
+            // { title: '可视化', path: '/visual' },
+            // { title: '每日一题', path: '/questions' },
             {
                 title: 'JS Bin',
                 path: 'https://jsbin.com/punigik/edit?js,console',
