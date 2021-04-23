@@ -2,7 +2,7 @@
 toc: content
 ---
 
-# React
+# React Hooks
 
 ## 组件通信方式
 
@@ -247,4 +247,38 @@ FancyInput = forwardRef(FancyInput);
 
 ## useLayoutEffect
 
+与 `useEffect` 相同，但它会在所有的 `DOM 变更之后` 同步调用 `effect`。可以使用它来 **读取 DOM 布局并同步触发重渲染**。在浏览器执行绘制之前，`useLayoutEffect` 内部的更新计划将被同步刷新。
+
+**尽可能使用标准的 useEffect 以避免阻塞视觉更新。**
+
+<Alert type='warning'>
+如果你正在将代码从 class 组件迁移到使用 Hook 的函数组件，则需要注意 useLayoutEffect 与 componentDidMount、componentDidUpdate 的调用阶段是一样的。但是，我们推荐你一开始先用 useEffect，只有当它出问题的时候再尝试使用 useLayoutEffect。
+</Alert>
+
 ## useDebugValue
+
+```js
+useDebugValue(value);
+```
+
+useDebugValue 可用于在 React 开发者工具中显示自定义 hook 的标签。
+
+例如，“自定义 Hook” 章节中描述的名为 useFriendStatus 的自定义 Hook：
+
+```js
+function useFriendStatus(friendID) {
+    const [isOnline, setIsOnline] = useState(null);
+
+    // ...
+
+    // 在开发者工具中的这个 Hook 旁边显示标签
+    // e.g. "FriendStatus: Online"
+    useDebugValue(isOnline ? 'Online' : 'Offline');
+
+    return isOnline;
+}
+```
+
+<Alert type="warning">
+我们不推荐你向每个自定义 Hook 添加 debug 值。当它作为共享库的一部分时才最有价值。
+</Alert>
