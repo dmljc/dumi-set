@@ -1,5 +1,6 @@
 ---
 toc: content
+order: 2
 ---
 
 # React 基础知识
@@ -136,6 +137,115 @@ this.setState((prevState, props) => {
 ```
 
 ## 生命周期
+
+### constructor
+
+在 React `组件挂载之前`，会调用它的构造函数，初始化 state。
+
+在为 React.Component `子类实现构造函数时`，应在其他语句之前前调用 `super(props)`。
+否则，this.props 在构造函数中可能会出现 this 未定义。
+
+**如果不初始化 state 或不进行方法绑定，则不需要为 React 组件实现构造函数。**
+
+### componentWillMount
+
+`UNSAFE_componentWillMount` 在`挂载之前`被调用。
+它在 render() 之前调用。因此在此方法中同步调用 `setState()` 不会触发额外渲染。
+
+### componentDidMount
+
+会在组件`挂载后`（插入 DOM 树中）立即调用。依赖于 DOM 节点的初始化应该放在这里。
+如需通过`网络请求`获取数据，此处是实例化请求的好地方。
+
+这个方法是比较适合`添加订阅`的地方。如果添加了订阅，请不要忘记在 `componentWillUnmount()` 里`取消订阅`。
+
+直接调用 `setState()`。它将`触发额外渲染`，但此渲染会发生在`浏览器更新屏幕之前`。
+**如此保证了即使在 render() 两次调用的情况下，用户也不会看到中间状态。**
+
+### componentWillReceiveProps
+
+只会在组件的 `props 更新时调用`。调用 this.setState() 通常不会触发 `UNSAFE_componentWillReceiveProps()`。
+
+### shouldComponentUpdate
+
+当 `props 或 state 发生变化时`，会在`渲染执行之前`被调用。返回值默认为 true。**首次渲染或使用 forceUpdate() 时不会调用该方法。**
+
+此方法`仅作为性能优化`的方式而存在。不建议在进行深层比较或使用 `JSON.stringify()`。这样非常影响效率，且会损害性能。
+
+### componentWillUpdate
+
+### componentDidUpdate
+
+### componentWillUnmount
+
+```js
+class Parent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { data: 0 };
+        this.setNewNumber = this.setNewNumber.bind(this);
+        console.log('111===constructor');
+    }
+
+    setNewNumber() {
+        this.setState({ data: this.state.data + 1 });
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.setNewNumber}>INCREMENT</button>
+                <Child myNumber={this.state.data}></Child>
+            </div>
+        );
+    }
+}
+
+class Child extends React.Component {
+    // UNSAFE_componentWillMount
+    componentWillMount() {
+        console.log('222===Component WILL MOUNT!');
+    }
+    componentDidMount() {
+        console.log('333===Component DID MOUNT!');
+    }
+    // UNSAFE_componentWillReceiveProps
+    componentWillReceiveProps(newProps) {
+        console.log('444===Component WILL RECEIVE PROPS!');
+    }
+    shouldComponentUpdate(newProps, newState) {
+        console.log('555===shouldComponentUpdate');
+        return true;
+    }
+    // UNSAFE_componentWillUpdate
+    componentWillUpdate(nextProps, nextState) {
+        console.log('666===Component WILL UPDATE!');
+    }
+    componentDidUpdate(prevProps, prevState) {
+        console.log('777===Component DID UPDATE!');
+    }
+    componentWillUnmount() {
+        console.log('888===Component WILL UNMOUNT!');
+    }
+
+    render() {
+        return (
+            <div>
+                <h3>{this.props.myNumber}</h3>
+            </div>
+        );
+    }
+}
+```
+
+### 过时的生命周期方法
+
+以下生命周期方法标记为`过时`。这些方法仍然有效，但不建议在新代码中使用它们。该名称将继续使用至 `React 17`。可以使用 `rename-unsafe-lifecycles codemod` 自动更新你的组件。
+
+```js
+UNSAFE_componentWillMount;
+UNSAFE_componentWillReceiveProps;
+UNSAFE_componentWillUpdate;
+```
 
 [点击在线查看 组件生命周期](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
 
