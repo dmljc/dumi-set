@@ -54,6 +54,12 @@ shouldComponentUpdate(newProps, nextState) {
 
 可先不用 SCU，有性能问题时再考虑使用。
 
+当一个组件的 props 或 state 变更，React 会将`最新`返回的元素与`之前`渲染的元素进行对比，以此决定是否有必要更新真实的 DOM。当它们不相同时，React 会更新该 DOM。
+
+即使 React 只更新改变了的 DOM 节点，重新渲染仍然花费了一些时间。在大部分情况下它并不是问题，不过如果它已经慢到让人注意了，你可以通过覆盖生命周期方法 `shouldComponentUpdate` 来进行提速。**该方法会在重新渲染前被触发。**
+
+在大部分情况下，你可以继承 `React.PureComponent` 以代替手写 `shouldComponentUpdate()`。它用当前与之前 `props` 和 `state` 的`浅比较`覆写了 `shouldComponentUpdate()` 的实现。
+
 ## PureComponent
 
 `React.PureComponent` 与 `React.Component` 很相似。两者的区别在于 React.Component 并未实现 `shouldComponentUpdate()`，而 React.PureComponent 中以`浅层对比` `prop` 和 `state` 的方式来实现了该函数。
@@ -117,7 +123,9 @@ export default React.memo(MyComponent, areEqual);
 
 </Alert>
 
-## createElement()
+## JSX
+
+`JSX` 的本质是 `createElement()`
 
 ```js
 React.createElement(
@@ -131,6 +139,47 @@ React.createElement(
 
 使用 `JSX `编写的代码将会`被转换成`使用 `React.createElement()` 的形式。
 
-[Babel 在线把 JSX 转为 React.createElement() 的形式](https://www.babeljs.cn/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAdQKYBsJwLaoBQAOATnAQM4CUiA3gFCKJGpQhFIA8AFgIwB8AEhnRwANDWKkyAOjABDXAF92Aeh68A3LQW1a7ACYwAbohh6AvACIARnAAeF3vUTs0mHKkRzclgF7AIFogIAMLoMBAA1mbUCPyyYHroqArKjioGho5AA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=true&targets=&version=7.13.17&externalPlugins=)
+[在线的 Babel 编译器](https://www.babeljs.cn/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAdQKYBsJwLaoBQAOATnAQM4CUiA3gFCKJGpQhFIA8AFgIwB8AEhnRwANDWKkyAOjABDXAF92Aeh68A3LQW1a7ACYwAbohh6AvACIARnAAeF3vUTs0mHKkRzclgF7AIFogIAMLoMBAA1mbUCPyyYHroqArKjioGho5AA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=true&targets=&version=7.13.17&externalPlugins=)
 
 ## React.Fragment
+
+## 高阶组件
+
+`高阶组件`（HOC）是 React 中用于复用组件逻辑的一种高级技巧。`HOC` 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的`设计模式`。
+
+具体而言，高阶组件是**参数为组件，返回值为新组件的函数。**
+
+```js
+const EnhancedComponent = higherOrderComponent(WrappedComponent);
+```
+
+组件是将 `props` 转换为 `UI`，而高阶组件是将`组件`转换为`另一个组件`。
+
+HOC 在 React 的第三方库中很常见，例如 `Redux` 的 `connect` 和 Relay 的 createFragmentContainer。
+
+请注意，HOC 不会修改传入的组件，也不会使用继承来复制其行为。相反，HOC 通过将组件包装在容器组件中来组成新组件。`HOC 是纯函数，没有副作用。`
+
+**HOC 注意事项:**
+
+-   不要试图在 HOC 中修改组件原型（或以其他方式改变它）。这样做会产生一些不良后果。
+-   不要在 render 方法中使用 HOC
+
+React 的 `diff 算法` 使用`组件标识`来确定它是应该`更新现有子树`还是`将其丢弃并挂载新子树`。 如果从 `render 返回的组件`与`前一个渲染中的组件`相同，则 React 通过将子树与新子树进行区分来`递归更新子树`。 如果它们不相等，则`完全卸载前一个子树`。
+
+```js
+render() {
+    // 每次调用 render 函数都会创建一个新的 EnhancedComponent
+    // EnhancedComponent1 !== EnhancedComponent2
+    const EnhancedComponent = enhance(MyComponent);
+    // 这将导致子树每次渲染都会进行卸载，和重新挂载的操作！
+    return <EnhancedComponent />;
+}
+```
+
+这不仅仅是性能问题 - `重新挂载`组件会导致该组件及其所有子组件的`状态丢失`。
+
+## 合成事件
+
+它是浏览器的原生事件的`跨浏览器包装器`。除兼容所有浏览器外，它还拥有和浏览器原生事件相同的接口，包括 `stopPropagation()` 和 `preventDefault()`。
+
+当你需要使用浏览器的`底层事件`时，只需要使用 `nativeEvent` 属性来获取即可。合成事件与浏览器的原生事件不同，也不会直接映射到原生事件。
