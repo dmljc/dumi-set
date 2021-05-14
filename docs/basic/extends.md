@@ -1,5 +1,6 @@
 ---
 toc: content
+order: 6
 ---
 
 # 类的创建和继承

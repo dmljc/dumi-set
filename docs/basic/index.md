@@ -1,5 +1,6 @@
 ---
 toc: content
+order: 1
 ---
 
 # JavaScript
@@ -72,6 +73,48 @@ typeof []; // 'object'
 typeof {}; // 'object'
 typeof new Date(); // 'object'
 typeof console.log; // 'function'
+```
+
+`typeof NaN` ????
+
+`NaN` Not a Number 的缩写，表示`非数字`。常见于字符串和数字运算的结果。
+
+```js
+5 - 'a'; // NaN
+0 / 0; // NaN
+```
+
+需要注意的是: `NaN` 不是独立的 `数据类型`，而是一个`特殊数值`，它的数据类型依然属于 `Number`。
+
+```js
+typeof NaN; // "number"
+```
+
+NaN 不等于任何值，包括它本身。所以 NaN 也是唯一一个和自身不严格相等的值。
+
+```js
+NaN === NaN; // false
+```
+
+数组的 indexOf 方法内部使用的是`严格相等`运算符，所以该方法对 NaN 不成立。
+
+```js
+[NaN].indexOf(NaN); // -1
+```
+
+NaN 在布尔运算时被当作 false。
+
+```js
+Boolean(NaN); // false
+```
+
+NaN 与任何数（包括它自己）的运算，得到的都是 NaN。
+
+```js
+NaN + 32; // NaN
+NaN - 32; // NaN
+NaN * 32; // NaN
+NaN / 32; // NaN
 ```
 
 ### instanceof
