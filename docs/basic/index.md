@@ -326,3 +326,69 @@ b = 100...
 我们来看下上面的面试小题目，为什么 a 是 undefined，而 b 却报错了，实际 JS 在代码执行之前，要「全文解析」，发现 var a，知道有个 a 的变量，存入了执行上下文，而 b 没有找到 var 关键字，这时候没有在执行上下文提前「占位」，所以代码执行的时候，提前报到的 a 是有记录的，只不过值暂时还没有赋值，即为 undefined，而 b 在执行上下文没有找到，自然会报错（没有找到 b 的引用）。
 
 另外，一个函数在执行之前，也会创建一个 函数执行上下文 环境，跟 全局上下文 差不多，不过 函数执行上下文 中会多出 this arguments 和函数的参数。
+
+## 防抖
+
+你是否在日常开发中遇到一个问题，在滚动事件中需要做个复杂计算或者实现一个按钮的防二次点击操作。
+
+这些需求都可以通过函数防抖动来实现。尤其是第一个需求，如果在频繁的事件回调中做复杂计算，很有可能导致页面卡顿，不如将多次计算合并为一次计算，只在一个精确点做操作。
+
+PS：防抖和节流的作用都是防止函数多次调用。区别在于，假设一个用户一直触发这个函数，且每次触发函数的间隔小于 wait，防抖的情况下只会调用一次，而节流的 情况会每隔一定时间（参数 wait）调用函数。
+
+```js
+// fn是我们需要包装的事件回调, delay是每次推迟执行的等待时间
+
+function debounce(fn, delay) {
+    let timer = null; // 定时器
+
+    return () => {
+        // 将debounce处理结果当作函数返回
+        let self = this; // 保留调用时的this上下文
+        let args = arguments; // 保留调用时传入的参数
+
+        if (timer) clearTimeout(timer); // 每次事件被触发时，都去清除之前的旧定时器
+
+        timer = setTimeout(() => {
+            // 设立新定时器
+            fn.apply(self, args);
+        }, delay);
+    };
+}
+
+// 用debounce来包装scroll的回调
+document.addEventListener(
+    'scroll',
+    debounce(() => console.log('触发了滚动事件'), 1000),
+);
+```
+
+## 节流
+
+节流和防抖动本质是不一样的。防抖动是将多次执行变为最后一次执行，节流是将多次执行变成每隔一段时间执行。
+
+```js
+// fn是我们需要包装的事件回调, time是时间间隔的阈值
+
+function throttle(fn, time) {
+    let last = 0; // last为上一次触发回调的时间
+
+    return () => {
+        // 将throttle处理结果当作函数返回
+        let self = this; // 保留调用时的this上下文
+        let args = arguments; // 保留调用时传入的参数
+        let now = +new Date(); // 记录本次触发回调的时间
+
+        if (now - last >= time) {
+            // 判断上次触发的时间和本次触发的时间差是否小于时间间隔的阈值
+            last = now; // 如果时间间隔大于我们设定的时间间隔阈值，则执行回调
+            fn.apply(self, args);
+        }
+    };
+}
+
+// 用throttle来包装scroll的回调
+document.addEventListener(
+    'scroll',
+    throttle(() => console.log('触发了滚动事件'), 1000),
+);
+```

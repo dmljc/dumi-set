@@ -32,7 +32,7 @@ const ProfilePage = React.lazy(() => import('./ProfilePage')); // 懒加载
 </Suspense>;
 ```
 
-## 性能优化
+## 性能优化 SCU
 
 `shouldComponentUpdate` 简称 `SCU`，默认返回 `true`。**React 默认：父组件有更新，子组件无条件更新**
 
@@ -60,7 +60,7 @@ shouldComponentUpdate(newProps, nextState) {
 
 在大部分情况下，你可以继承 `React.PureComponent` 以代替手写 `shouldComponentUpdate()`。它用当前与之前 `props` 和 `state` 的`浅比较`覆写了 `shouldComponentUpdate()` 的实现。
 
-## PureComponent
+## 性能优化 PureComponent
 
 `React.PureComponent` 与 `React.Component` 很相似。两者的区别在于 React.Component 并未实现 `shouldComponentUpdate()`，而 React.PureComponent 中以`浅层对比` `prop` 和 `state` 的方式来实现了该函数。
 
@@ -84,7 +84,7 @@ map1.get('b'); // 2
 map2.get('b'); // 50
 ```
 
-## React.memo
+## 性能优化 memo
 
 ```js
 const MyComponent = React.memo(function MyComponent(props) {
@@ -177,6 +177,11 @@ render() {
 ```
 
 这不仅仅是性能问题 - `重新挂载`组件会导致该组件及其所有子组件的`状态丢失`。
+
+缺点：
+
+-   组件层级嵌套过多，不易渲染，不易调试
+-   HOC 会劫持 props，必须严格规范，容易出现疏漏
 
 ## 合成事件
 

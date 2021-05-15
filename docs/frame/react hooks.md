@@ -16,7 +16,13 @@ order: 4
 
 Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。
 
-Hook 是一些可以让你在函数组件里“钩入” React state 及生命周期等特性的函数。Hook 不能在 class 组件中使用 —— 这使得你不使用 class 也能使用 React。
+Hook 是一些可以让你在函数组件里“钩入” React state 及生命周期等特性的函数。
+hooks 使用规范：
+
+-   Hook 不能在 class 组件中使用，只能在 `函数组件` 或者 `自定义组件` 中使用
+-   只能用在顶层代码，不能在 `循环` 或者 `条件判断` 中使用：
+    -   `无法保证调用顺序，hooks 严重依赖于调用顺序`
+-   eslint-plugin-react-hooks 的 ESLint 插件来强制执行这两条规则
 
 ## useState
 
@@ -268,7 +274,29 @@ useReducer 能代替 redux 吗？？？？？
 -   useReducer 是 单个组件的状态管理，组件的通信还是需要 props
 -   redux 是全局的状态管理，多组件共享数据
 
-## useCallback
+## 性能优化 useMemo
+
+`useMemo 缓存数据、useCallback 缓存函数`
+
+`useMemo 缓存数据、useCallback 缓存函数`
+
+`useMemo 缓存数据、useCallback 缓存函数`
+
+```js
+const memoizedValue = useMemo(() => {
+    computeExpensiveValue(a, b);
+}, [a, b]);
+```
+
+把`创建函数`和`依赖项数组`作为参数传入 `useMemo`，它仅会在某个`依赖项改变时`才重新计算 `memoized `值。这种优化有助于避免在每次渲染时都进行高开销的计算。`类似于 vue 中的计算属性 computed。`
+
+记住，传入 `useMemo` 的函数会在`渲染期间执行`。请不要在这个函数内部执行与渲染无关的操作，诸如副作用这类的操作属于 `useEffect` 的适用范畴，而不是 useMemo。
+
+如果没有提供依赖项数组，useMemo 在每次渲染时都会计算新的值。
+
+**可以把 useMemo 作为性能优化的手段，但不要把它当成语义上的保证。** 将来，React 可能会选择“遗忘”以前的一些 memoized 值，并在下次渲染时重新计算它们。
+
+## 性能优化 useCallback
 
 ```js
 const memoizedCallback = useCallback(() => {
@@ -279,22 +307,6 @@ const memoizedCallback = useCallback(() => {
 把内联`回调函数`及`依赖项数组`作为`参数`传入 `useCallback`，返回一个 `memoized 回调函数`，该回调函数仅在某个`依赖项改变时`，才会更新，`避免非必要渲染`（例如 `shouldComponentUpdate`）的子组件时，它将非常有用。
 
 **useCallback(fn, deps) 相当于 useMemo(() => fn, deps)。**
-
-## useMemo
-
-```js
-const memoizedValue = useMemo(() => {
-    computeExpensiveValue(a, b);
-}, [a, b]);
-```
-
-把`创建函数`和`依赖项数组`作为参数传入 `useMemo`，它仅会在某个`依赖项改变时`才重新计算 `memoized `值。这种优化有助于避免在每次渲染时都进行高开销的计算。
-
-记住，传入 `useMemo` 的函数会在`渲染期间执行`。请不要在这个函数内部执行与渲染无关的操作，诸如副作用这类的操作属于 `useEffect` 的适用范畴，而不是 useMemo。
-
-如果没有提供依赖项数组，useMemo 在每次渲染时都会计算新的值。
-
-**可以把 useMemo 作为性能优化的手段，但不要把它当成语义上的保证。** 将来，React 可能会选择“遗忘”以前的一些 memoized 值，并在下次渲染时重新计算它们。
 
 ## useRef
 
