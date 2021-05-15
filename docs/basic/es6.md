@@ -5,6 +5,48 @@ order: 8
 
 # ES6+
 
+## Symbol
+
+ES5 的对象属性名都是字符串，这容易造成 `属性名的冲突`。
+
+比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突，表示独一无二的值。这就是 ES6 引入 Symbol 的原因。
+
+Symbol 函数前不能使用 new 命令，否则会报错。 **由于 Symbol 值不是对象，所以不能添加属性。**
+
+```js
+let s = Symbol();
+
+typeof s; // "symbol"
+
+let sym = new Symbol(); // TypeError: Symbol is not a constructor
+```
+
+Symbol 函数的参数只是表示对当前 Symbol 值的描述，因此相同参数的 Symbol 函数的返回值是不相等的:
+
+```js
+// 没有参数的情况
+let s1 = Symbol();
+let s2 = Symbol();
+
+s1 === s2; // false
+
+// 有参数的情况
+let s1 = Symbol('foo');
+let s2 = Symbol('foo');
+
+s1 === s2; // false
+```
+
+Symbol 值不能与其他类型的值进行运算，会报错:
+
+```js
+let sym = Symbol('My symbol');
+
+'your symbol is ' +
+    sym // TypeError: can't convert symbol to string
+    `your symbol is ${sym}`; // TypeError: can't convert symbol to string
+```
+
 ## BigInt
 
 JavaScript 所有`数字都保存成 64 位浮点数`，这给数值的表示带来了两大限制：
@@ -63,48 +105,6 @@ bigToNum === num; // true
 if (0n) {
     // 永远不会执行
 }
-```
-
-## Symbol
-
-ES5 的对象属性名都是字符串，这容易造成 `属性名的冲突`。
-
-比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突，表示独一无二的值。这就是 ES6 引入 Symbol 的原因。
-
-Symbol 函数前不能使用 new 命令，否则会报错。 **由于 Symbol 值不是对象，所以不能添加属性。**
-
-```js
-let s = Symbol();
-
-typeof s; // "symbol"
-
-let sym = new Symbol(); // TypeError: Symbol is not a constructor
-```
-
-Symbol 函数的参数只是表示对当前 Symbol 值的描述，因此相同参数的 Symbol 函数的返回值是不相等的:
-
-```js
-// 没有参数的情况
-let s1 = Symbol();
-let s2 = Symbol();
-
-s1 === s2; // false
-
-// 有参数的情况
-let s1 = Symbol('foo');
-let s2 = Symbol('foo');
-
-s1 === s2; // false
-```
-
-Symbol 值不能与其他类型的值进行运算，会报错:
-
-```js
-let sym = Symbol('My symbol');
-
-'your symbol is ' +
-    sym // TypeError: can't convert symbol to string
-    `your symbol is ${sym}`; // TypeError: can't convert symbol to string
 ```
 
 ## set
