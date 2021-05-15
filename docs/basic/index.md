@@ -177,6 +177,30 @@ Object.prototype.toString.call(console.log); // "[object Function]"
 
 基本类型和引用类型不同的是: 基本类型存储的是值，引用类型存储的是地址（指针）。当你创建了一个对象类型的时候，计算机会在内存中帮我们开辟一个空间来存放值，但是我们需要找到这个空间，这个空间会拥有一个地址（指针）。
 
+## var let const
+
+var
+
+-   ES5 命令
+-   没有块级作用域的概念
+-   会变量提升
+-   未声明之前可以调用，值为 undefined
+-   能重复声明
+-    声明的全局变量不会挂在顶层对象(global)下面
+
+let / const
+
+-   ES6 命令
+-   有块级作用域概念
+-   会变量提升，但是，因为暂时性死区而报错 (在声明之前调用就处于暂时性死区)
+-   不能重复声明
+
+const
+
+-   声明之后必须马上赋值，否则会报错
+-   基本类型一旦声明不允许修改
+-   引用类型 指针指向的地址不能修改，内部数据可以修改
+
 ## 数组去重
 
 **1、双重 for 循环 (如果前一个值与后一个值相等，那么就去掉后一个值)**
@@ -341,15 +365,15 @@ PS：防抖和节流的作用都是防止函数多次调用。区别在于，假
 function debounce(fn, delay) {
     let timer = null; // 定时器
 
+    // 将debounce处理结果当作函数返回
     return () => {
-        // 将debounce处理结果当作函数返回
         let self = this; // 保留调用时的this上下文
         let args = arguments; // 保留调用时传入的参数
 
         if (timer) clearTimeout(timer); // 每次事件被触发时，都去清除之前的旧定时器
 
+        // 设立新定时器
         timer = setTimeout(() => {
-            // 设立新定时器
             fn.apply(self, args);
         }, delay);
     };
@@ -372,16 +396,17 @@ document.addEventListener(
 function throttle(fn, time) {
     let last = 0; // last为上一次触发回调的时间
 
+    // 将throttle处理结果当作函数返回
     return () => {
-        // 将throttle处理结果当作函数返回
         let self = this; // 保留调用时的this上下文
         let args = arguments; // 保留调用时传入的参数
         let now = +new Date(); // 记录本次触发回调的时间
 
-        if (now - last >= time) {
-            // 判断上次触发的时间和本次触发的时间差是否小于时间间隔的阈值
-            last = now; // 如果时间间隔大于我们设定的时间间隔阈值，则执行回调
+        // 判断本次触发的时间和上次触发的时间差是否大于时间间隔的阈值
+        // 如果时间间隔大于我们设定的时间间隔阈值，则执行回调
+        if (now - last > time) {
             fn.apply(self, args);
+            last = now;
         }
     };
 }
