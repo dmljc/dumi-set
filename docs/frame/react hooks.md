@@ -71,6 +71,43 @@ useEffect(() => {
 
 如果想执行`只运行一次`的 effect（仅在组件`挂载`和`卸载`时执行），可以传递一个`空数组` 作为第二个参数(effect 内部的 props 和 state 就会一直`持有其初始值`)。这就告诉 React 你的 effect 不依赖于 props 或 state 中的任何值，所以它永远都`不需要重复执行`。
 
+useEffect 模拟 组件生命周期：
+
+```js
+// 模拟 componentDidMount 和 componentDidUpdate
+useEffect(() => {
+    console.log('发送 ajax 请求');
+}); // 没有第二个参数
+
+// 模拟 componentDidMount
+useEffect(() => {
+    console.log('加载完了');
+}, []); // 第二个参数为[]
+
+// 模拟 componentDidUpdate
+useEffect(() => {
+    console.log('更新');
+}, [state]); // 第二个参数为依赖的state
+
+// 模拟 componentWillUnMount
+useEffect(() => {
+    let timer = window.setInterval(() => {
+        console.log(+new Date());
+    }, 1000);
+
+    // 【特别注意】
+    // 此处不完全等于 componentWillUnMount
+    // props 发生变化，即更新，也会执行结束监听
+    // 准确的说：返回的函数会在下一次 effeft 执行之前 被执行
+
+    return () => window.clearInterval(timer);
+}, []);
+
+// useEffect 依赖为 []时，组件销毁即执行 清除定时器
+// useEffect 无依赖 或者 依赖为[a,b]时，组件更新时执行 清除定时器
+// 即：下一次 effeft 执行之前会执行
+```
+
 ## useContext
 
 ```js
@@ -119,13 +156,13 @@ function ThemedButton() {
 
 ## useReducer
 
-useState 的替代方案。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法。
+useState 的替代方案，主要用来处理复杂场景下的 state。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法。
 
 ```js
 const [state, dispatch] = useReducer(reducer, initialArg, init);
 ```
 
-在某些场景下，`useReducer` 会比 `useState` 更适用，例如 state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等。并且，使用 useReducer 还能给那些会触发深更新的组件做性能优化，因为你可以向子组件传递 dispatch 而不是回调函数 。
+在某些场景下，`useReducer` 会比 `useState` 更适用，例如 state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等。并且，使用 useReducer 还能给那些会触发深更新的组件做性能优化，因为你可以向子组件传递 dispatch 而不是回调函数。
 
 以下是用 reducer 重写 useState 一节的计数器示例：
 
@@ -154,6 +191,82 @@ function Counter() {
     );
 }
 ```
+
+## 模拟 redux
+
+接下来我们用 useReducer 和 useContext 来模拟 redux
+
+```js
+import React, { createContext, useReducer } from 'react';
+export const GlobalContext = createContext({});
+
+const initalState = {
+    user: null,
+    menu: [],
+};
+
+export const actions = {
+    SET_USER: 'setUser',
+};
+
+const reducer = (state, { type, payload = null }) => {
+    switch (type) {
+        case actions.SET_USER:
+            return {
+                ...state,
+                user: payload ? { ...payload } : null,
+            };
+        default:
+            return state;
+    }
+};
+
+export const ContextProvider = (props) => {
+    const [store, dispatch] = useReducer(reducer, initalState);
+    return (
+        <GlobalContext.Provider value={{ store, dispatch }}>
+            {props.children}
+        </GlobalContext.Provider>
+    );
+};
+```
+
+在 App.js 入口文件中使用：
+
+```js
+import { ContextProvider } from '@/context/';
+<ContextProvider>
+    <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
+</ContextProvider>;
+```
+
+在业务组件中 使用和修改：
+
+```js
+import { GlobalContext, actions } from '@/context/'
+
+...
+
+const { stroe, dispatch } = useContext(GlobalContext)
+
+// 使用 store 中的数据
+
+<div>{store.user}</div>
+
+// ... 从接口获取更新后的数据 data... 使用 dispatch 修改 SET_USER类型的 data
+
+dispatch({ type: actions.SET_USER, payload: data })
+```
+
+useReducer 能代替 redux 吗？？？？？
+
+答案是：不能。
+
+原因如下：
+
+-   useReducer 是 useState 的代替方案，主要用来处理复杂的 state
+-   useReducer 是 单个组件的状态管理，组件的通信还是需要 props
+-   redux 是全局的状态管理，多组件共享数据
 
 ## useCallback
 
@@ -245,41 +358,3 @@ FancyInput = forwardRef(FancyInput);
 ```
 
 在本例中，渲染 `<FancyInput ref={inputRef} />` 的父组件可以调用 `inputRef.current.focus()`。
-
-## useLayoutEffect
-
-与 `useEffect` 相同，但它会在所有的 `DOM 变更之后` 同步调用 `effect`。可以使用它来 **读取 DOM 布局并同步触发重渲染**。在浏览器执行绘制之前，`useLayoutEffect` 内部的更新计划将被同步刷新。
-
-**尽可能使用标准的 useEffect 以避免阻塞视觉更新。**
-
-<Alert type='warning'>
-如果你正在将代码从 class 组件迁移到使用 Hook 的函数组件，则需要注意 useLayoutEffect 与 componentDidMount、componentDidUpdate 的调用阶段是一样的。但是，我们推荐你一开始先用 useEffect，只有当它出问题的时候再尝试使用 useLayoutEffect。
-</Alert>
-
-## useDebugValue
-
-```js
-useDebugValue(value);
-```
-
-useDebugValue 可用于在 React 开发者工具中显示自定义 hook 的标签。
-
-例如，“自定义 Hook” 章节中描述的名为 useFriendStatus 的自定义 Hook：
-
-```js
-function useFriendStatus(friendID) {
-    const [isOnline, setIsOnline] = useState(null);
-
-    // ...
-
-    // 在开发者工具中的这个 Hook 旁边显示标签
-    // e.g. "FriendStatus: Online"
-    useDebugValue(isOnline ? 'Online' : 'Offline');
-
-    return isOnline;
-}
-```
-
-<Alert type="warning">
-我们不推荐你向每个自定义 Hook 添加 debug 值。当它作为共享库的一部分时才最有价值。
-</Alert>
