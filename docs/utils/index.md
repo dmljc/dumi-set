@@ -9,6 +9,13 @@ order: 1
 
 ![](https://t1.picb.cc/uploads/2019/09/09/gXSUxe.jpg)
 
+## 创建分支
+
+```js
+// 创建并切换分支
+git checkout -b feature1
+```
+
 ## Stash
 
 `stash` 用于临时保存工作目录的改动。开发中可能会遇到代码写一半需要切分支打包的问题，如果这时候你不想 `commit` 的话，就可以使用该命令。
@@ -155,4 +162,4 @@ git checkout master
 git merge develop
 ```
 
-rebase 对比 merge，优势在于合并后的结果很清晰，只有一条线，劣势在于如果一旦出现冲突，解决冲突很麻烦，可能要解决多个冲突，但是 merge 出现冲突只需要解决一次。
+`rebase` 对比 `merge`，优势在于`合并后的结果很清晰`，只有一条线，劣势在于如果一旦出现冲突，`解决冲突很麻烦`，可能要解决多个冲突，但是 `merge` 出现`冲突只需要解决一次`。
