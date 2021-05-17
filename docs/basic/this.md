@@ -177,6 +177,47 @@ Function.prototype.myCall = function (context) {
 -   因为 call 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
 -   然后调用函数并将对象上的函数删除 (fn 只是个临时属性，调用完毕后删除它)
 
+apply 的实现也类似
+
+```js
+Function.prototype.myApply = function (context) {
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    context = context || window;
+    context.fn = this;
+    let result;
+    // 处理参数和 call 有区别
+    if (arguments[1]) {
+        result = context.fn(...arguments[1]);
+    } else {
+        result = context.fn();
+    }
+    delete context.fn;
+    return result;
+};
+```
+
+bind 的实现对比其他两个函数略微地复杂了一点，因为 bind 需要返回一个函数，需要判断一些边界问题，以下是 bind 的实现
+
+```js
+Function.prototype.myBind = function (context) {
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    const _this = this;
+    const args = [...arguments].slice(1);
+    // 返回一个函数
+    return function F() {
+        // 因为返回了一个函数，我们可以 new F()，所以需要判断
+        if (this instanceof F) {
+            return new _this(...args, ...arguments);
+        }
+        return _this.apply(context, args.concat(...arguments));
+    };
+};
+```
+
 ## 实现 new 关键字
 
 > 涉及面试题：new 的原理是什么？通过 new 的方式创建对象和通过字面量创建有什么区别？
