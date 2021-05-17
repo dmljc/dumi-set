@@ -1,9 +1,9 @@
 ---
 toc: content
-order: 10
+order: 2
 ---
 
-# Vue 基础
+# Vue 基础知识
 
 Vue 是一套用于构建用户界面的`渐进式框架`。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只`关注视图层`，不仅`易于上手`，还便于与`第三方库`或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
 
@@ -201,3 +201,134 @@ Vue.component('currency-input', {
 .sync 修饰符
 
 在有些情况下，我们可能需要对一个 prop 进行“双向绑定”。不幸的是，真正的双向绑定会带来维护上的问题，因为子组件可以变更父组件，且在父组件和子组件都没有明显的变更来源。为了方便起见，我们为这种模式提供一个缩写，即 .sync 修饰符。
+
+## vue-router
+
+### 动态路由
+
+我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件(例如详情页面)
+
+```js
+const router = new VueRouter({
+    routes: [
+        // 动态路径参数 以冒号开头
+        { path: '/detail/:id', component: DetailInfo },
+    ],
+});
+```
+
+一个“路径参数”使用冒号 : 标记。当匹配到一个路由时，参数值会被设置到 `this.$route.param`s。
+
+### 懒加载
+
+当打包构建应用时，JavaScript 包会变得非常大，影响页面加载。如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+
+结合 Vue 的异步组件 (opens new window)和 Webpack 的代码分割功能 (opens new window)，轻松实现路由组件的懒加载。
+
+```js
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/home',
+            component: () =>
+                import(/* webpackChunkName: "home" */ './home.vue'),
+        },
+    ],
+});
+```
+
+若想把某个路由下的所有组件都打包在同个异步块 (chunk) 中。只需要使用 命名 webpackChunkName 即可。
+
+### 路由模式
+
+vue-router 默认 `hash` 模式 —— 使用 URL 的 hash 来模拟一个完整的 URL，于是当 URL 改变时，页面不会重新加载。
+
+如果不想要很丑的 hash，我们可以用路由的 `history` 模式，这种模式充分利用 `history.pushState` API 来完成 URL 跳转而`无须重新加载页面`。
+
+```js
+const router = new VueRouter({
+    mode: 'history',
+    routes: [...]
+})
+```
+
+当你使用 `history` 模式时，URL 就像正常的 url，例如 http://yoursite.com/user/id，也好看！
+
+不过这种模式要玩好，还需要`后台配置支持`。因为我们的应用是个单页客户端应用，如果后台没有正确的配置，当用户在浏览器直接访问 http://oursite.com/user/id 就会返回 `404`，这就不好看了。
+
+所以呢，你要在服务端增加一个`覆盖所有情况的候选资源`：如果 URL 匹配不到任何静态资源，则应该返回同一个 `index.html` 页面，这个页面就是你 app 依赖的页面。
+
+### 路由守卫
+
+全局前置守卫
+
+`beforeEach`，通常做用户`鉴权逻辑`，若身份验证失败则重定向到 `login` 页面
+
+这里有一个在用户未能验证身份时重定向到 /login 的示例：
+
+```js
+// BAD
+router.beforeEach((to, from, next) => {
+    if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' });
+    // 如果用户未能验证身份，则 `next` 会被调用两次
+    next();
+});
+```
+
+### 全局解析守卫
+
+`beforeResolve` 这和 `beforeEach` 类似，区别是: 在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被调用。
+
+### 全局后置钩子
+
+`afterEach` 然而和守卫不同的是，这些钩子`不会接受 next 函数`也`不会改变导航本身`
+
+```js
+router.afterEach((to, from) => {
+    // ...
+});
+```
+
+### 路由独享的守卫
+
+你可以在路由配置上直接定义 `beforeEnter` 守卫：
+
+```js
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/foo',
+            component: Foo,
+            beforeEnter: (to, from, next) => {
+                // ...
+            },
+        },
+    ],
+});
+```
+
+### 组件内的守卫
+
+-   beforeRouteEnter
+-   beforeRouteUpdate (2.2 新增)
+-   beforeRouteLeave
+
+## Vuex
+
+### 基础使用
+
+vuex 是专门为 vue 提供的`全局状态管理系统`，用于多个组件中`数据共享`、`数据缓存`等。（`无法持久化`、内部核心原理是`通过创造一个全局实例 new Vue`）。
+
+![vuex](/images/frame/vuex.png)
+
+-   State：`定义数据结构`，可以在这里设置默认的`初始状态`。
+-   Getter：允许组件从 `Store` 中获取数据，`mapGetters` 辅助函数仅仅是将 store 中的 getter 映射到局部`计算属性`。
+-   Mutation：是唯一更改 store 中状态的方法，且必须是`同步函数` (commit) 如: store.commit('increment')。
+-   Action：用于提交 mutation，而`不是直接变更状态`，可以包含任意`异步`操作 (dispatch) 如: this.store.dispatch('increment')。
+-   Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中。
+
+### 数据丢失
+
+Vuex 页面刷新会造成数据丢失: 需要做 vuex `数据持久化` 一般使用`本地存储`的方案来保存数据 可以自己设计存储方案 也可以使用第三方插件。
+
+推荐使用 `vuex-persist` 插件，是为 Vuex 持久化存储而生的插件。不需要手动存取 storage ，而是直接将状态保存至 `cookie` 或者 `localStorage` 中。

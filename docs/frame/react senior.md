@@ -1,6 +1,6 @@
 ---
 toc: content
-order: 3
+order: 6
 ---
 
 # React 高级特性
