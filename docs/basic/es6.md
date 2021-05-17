@@ -113,17 +113,16 @@ ES6 提供了新的数据结构 `Set`。它类似于数组，但是成员的值�
 
 ```js
 const set = new Set([1, 2, 3, 4, 4]);
-[...set];
-// [1, 2, 3, 4]
+[...set]; // [1, 2, 3, 4]
 ```
 
 Set 实例的属性和方法：
 
-Set.size：返回 Set 实例的成员总数。
-Set.add(value)：添加某个值，返回 Set 结构本身。
-Set.delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
-Set.has(value)：返回一个布尔值，表示该值是否为 Set 的成员。
-Set.clear()：清除所有成员，没有返回值。
+-   Set.size：返回 Set 实例的成员总数。
+-   Set.add(value)：添加某个值，返回 Set 结构本身。
+-   Set.delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
+-   Set.has(value)：返回一个布尔值，表示该值是否为 Set 的成员。
+-   Set.clear()：清除所有成员，没有返回值。
 
 ## WeakSet
 
