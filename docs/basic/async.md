@@ -3,7 +3,7 @@ toc: content
 order: 7
 ---
 
-# 异步发展史
+# 异步编程发展史
 
 ## 回调函数
 
@@ -29,9 +29,9 @@ ajax(url, () => {
 
 ## Generator
 
-可以控制函数的执行，但是一般见到的不多，一般会配合 co 函数库使用。(co 函数库是一个小工具，用于 Generator 函数的自动执行)。
+`可以控制函数的执行`，但是一般见到的不多，一般会配合 co 函数库使用。(co 函数库是一个小工具，用于 Generator 函数的自动执行)。
 
-Generator 函数解决回调地狱的问题，可以把之前的回调地狱例子改写为如下代码：
+Generator 函数`解决回调地狱`的问题，可以把之前的回调地狱例子改写为如下代码：
 
 ```js
 function* fetch() {
@@ -45,11 +45,11 @@ let result2 = it.next();
 let result3 = it.next();
 ```
 
-**Generator 虽然可以控制函数的执行但是不够优雅和简洁。**
+`Generator` 虽然可以`控制函数的执行`但是`不够优雅`和`简洁`。
 
 ## Promise
 
-> 涉及面试题：Promise 的特点是什么，分别有什么优缺点？什么是 Promise 链？
+> Promise 的特点是什么，分别有什么优缺点？什么是 Promise 链？
 > Promise 构造函数执行和 then 函数执行有什么区别？
 
 Promise 翻译过来就是承诺的意思，这个承诺会在未来有一个确切的答复，并且该承诺有三种状态，分别是：
@@ -58,7 +58,7 @@ Promise 翻译过来就是承诺的意思，这个承诺会在未来有一个确
 -   完成了 （resolved）
 -   拒绝了（rejected）
 
-这个承诺一旦从等待状态变成为其他状态就永远不能更改状态了，也就是说一旦状态变为 resolved 后，就不能再次改变
+这个承诺一旦从等待状态变成为其他状态就永远不能更改状态了，也就是说一旦状态变为 resolved 后，就不能再次改变。
 
 ```js
 new Promise((resolve, reject) => {
@@ -68,7 +68,7 @@ new Promise((resolve, reject) => {
 });
 ```
 
-当我们在构造 Promise 的时候，构造函数内部的代码是立即执行的
+当我们在构造 `Promise` 的时候，`构造函数`内部的代码是`立即执行的`。
 
 ```js
 new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ console.log('finifsh');
 // new Promise -> finifsh
 ```
 
-Promise 实现了链式调用，也就是说每次调用 then 之后返回的都是一个 Promise，并且是一个全新的 Promise，原因也是因为状态不可变。如果你在 then 中 使用了 return，那么 return 的值会被 Promise.resolve() 包装
+`Promise` 实现了`链式调用`，也就是说每次调用 `then` 之后返回的都是一个全新的 `Promise`，原因也是因为`状态不可变`。如果你在 then 中 使用了 `return`，那么 return 的值会被 `Promise.resolve()` 包装。
 
 ```js
 Promise.resolve(1)
@@ -119,7 +119,7 @@ Promise 缺点如下:
 
 ## async await
 
-一个函数如果加上 async ，那么该函数就会返回一个 Promise， 就是将返回值使用 Promise.resolve() 包裹了下，和 then 中处理返回值一样，并且 await 只能配套 async 使用。
+一个函数如果加上 `async` ，那么该函数就会返回一个 `Promise`， 就是将返回值使用 `Promise.resolve()` 包裹了下，和 `then` 中处理返回值一样，并且 `await` 只能配套 `async` 使用。
 
 ```js
 async function test() {
@@ -138,11 +138,15 @@ async function test() {
 }
 ```
 
-优点：异步的终极解决方案 代码清晰，不用像 Promise 写一大堆 then 链，处理了回调地狱的问题。
+优点：
 
-缺点：await 将异步代码改造成同步代码，如果多个异步操作没有依赖性使用 await 会导致性能的降低。
+`异步的终极解决方案 代码清晰，不用像 Promise 写一大堆 then 链，处理了回调地狱的问题。`
 
-PS：其实 await 就是 generator 加上 Promise 的语法糖，且内部实现了自动执行 generator。
+缺点：
+
+`await 将异步代码改造成同步代码，如果多个异步操作没有依赖性使用 await 会导致性能的降低。`
+
+PS：其实 `await` 就是 `generator` 加上 `Promise` 的语法糖，且内部实现了自动执行 `generator`。
 
 ## 实现一个 promise
 
