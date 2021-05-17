@@ -24,19 +24,22 @@ console.log(b.age); // 2
 
 ```js
 // 思路：遍历对象，然后把属性和属性值都放在一个新的对象即可
-var shallowCopy = function (obj) {
+
+function shallowCopy(obj) {
     // 临界点判空处理（只拷贝对象）
     if (typeof obj !== 'object') return;
+
     // 根据obj的类型判断是新建一个数组还是对象
-    var newObj = obj instanceof Array ? [] : {};
+    let newObj = obj instanceof Array ? [] : {};
+
     // 遍历obj，并且判断是obj的属性才拷贝
-    for (var key in obj) {
+    for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
             newObj[key] = obj[key];
         }
     }
     return newObj;
-};
+}
 ```
 
 -   然后，可以通过 `Object.assign` 来解决这个问题
@@ -85,17 +88,19 @@ console.log(b.jobs.first); // native
 
 ```js
 // 思路：拷贝的时候判断一下属性值的类型，如果是对象，递归调用深拷贝函数即可
-var deepCopy = function (obj) {
+function deepCopy(obj) {
     if (typeof obj !== 'object') return;
-    var newObj = obj instanceof Array ? [] : {};
-    for (var key in obj) {
+
+    let newObj = obj instanceof Array ? [] : {};
+
+    for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
             newObj[key] =
                 typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
         }
     }
     return newObj;
-};
+}
 // 尽管使用深拷贝会完全的克隆一个新对象，不会产生副作用，但是深拷贝因为使用递归，
 // 性能会不如浅拷贝，在开发中，还是要根据实际情况进行选择。
 ```

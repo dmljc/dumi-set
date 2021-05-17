@@ -7,7 +7,7 @@ order: 6
 
 ## 类的创建
 
-在 ES5 中，类的创建方式是创建 一个 function，在这个 function 的 prototype 里面增加属性和方法。
+在 ES5 中，`类的创建`方式是创建 一个 `function`，在这个 function 的 `prototype` 里面增加`属性`和`方法`。
 
 下面来创建一个 Animal 类：
 
@@ -31,7 +31,7 @@ Animal.prototype.eat = function (food) {
 
 ## 构造函数继承
 
-在 ES5 中，我们可以使用 构造函数实现继承，使用父类的构造函数来增强子类实例，等于是复制父类的实例属性给子类（没用到原型）。
+在 ES5 中，使用 `构造函数实现继承`，使用`父类的构造函数来增强子类实例`，等于是`复制父类的实例属性给子类`（没用到原型）。
 
 ```js
 // 定义父类
@@ -51,11 +51,11 @@ test.language; // ['javascript', 'react', 'node.js']
 test.value; // 666
 ```
 
-构造继承关键在于，通过在子类的内部调用父类，即通过使用 apply()或 call()方法可以在将来新创建的对象上获取父类的成员和方法。
+**构造继承关键在于:通过在子类的内部调用父类，即通过使用 apply 或 call 方法可以在将来新创建的对象上获取父类的属性和方法。**
 
 ## class、extends 实现继承
 
-在 ES6 中，我们可以通过 class 和 extends 实现继承
+在 ES6 中，我们可以通过 `class` 和 extends 实现继承
 
 ```js
 // 定义父类
@@ -88,7 +88,7 @@ console.log(child);
 // mather: "mama"
 ```
 
-注意：子类必须在 constructor 方法中调用 super 方法，否则新建实例时会报错。这是因为子类没有自己的 this 对象，而是继承父类的 this 对象，然后对其进行加工。
+注意：子类必须在 `constructor` 方法中调用 `super `方法，否则新建实例时会报错。这是因为子类没有自己的 `this` 对象，而是继承父类的 this 对象，然后对其进行加工。
 
 <Alert type="info">
 ES5 和 ES6 继承的区别: <br/><br/>
