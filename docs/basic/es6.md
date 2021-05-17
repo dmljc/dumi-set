@@ -107,9 +107,62 @@ if (0n) {
 }
 ```
 
-## set
+## Set
 
-## map
+ES6 提供了新的数据结构 `Set`。它类似于数组，但是成员的值都是`唯一`的，没有重复的值。
+
+```js
+const set = new Set([1, 2, 3, 4, 4]);
+[...set];
+// [1, 2, 3, 4]
+```
+
+Set 实例的属性和方法：
+
+Set.size：返回 Set 实例的成员总数。
+Set.add(value)：添加某个值，返回 Set 结构本身。
+Set.delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
+Set.has(value)：返回一个布尔值，表示该值是否为 Set 的成员。
+Set.clear()：清除所有成员，没有返回值。
+
+## WeakSet
+
+`WeakSet` 结构与 `Set` 类似，也是不重复的值的集合。但是，它与 Set 有两个区别。
+
+-   首先，WeakSet 的成员`只能是对象`，而不能是其他类型的值
+-   其次，WeakSet 中的对象都是`弱引用`，即垃圾回收机制不考虑 WeakSet 对该对象的引用，也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象还存在于 WeakSet 之中。
+
+## Map
+
+JavaScript 的对象（Object），本质上是`键值对的集合`（Hash 结构），但是传统上只能用`字符串当作键`。这给它的使用带来了很大的限制。
+
+```js
+const data = {};
+const element = document.getElementById('myDiv');
+
+data[element] = 'metadata';
+data['[object HTMLDivElement]']; // "metadata"
+```
+
+上面代码原意是将一个 DOM 节点作为对象 data 的键，但是由于对象只接受字符串作为键名，所以 element 被自动转为字符串[object HTMLDivElement]。
+
+为了解决这个问题，ES6 提供了 `Map` 数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。
+
+实例的属性和操作方法
+
+-   map.size 属性返回 Map 结构的成员总数。
+-   map.set(key, value) 设置键名 key 对应的键值为 value
+-   map.get(key) 读取 key 对应的键值
+-   map.has(key) 返回一个布尔值，表示某个键是否在当前 Map 对象之中
+-   map.delete(key) 删除某个键，返回 true
+-   map.clear() 清除所有成员，没有返回值
+
+## WeakMap
+
+WeakMap 结构与 Map 结构类似，也是用于生成键值对的集合。WeakMap 与 Map 的区别有两点。
+
+-   首先，WeakMap `只接受对象作为键名`（null 除外），不接受其他类型的值作为键名。
+-   它的键名所引用的对象都是弱引用，即垃圾回收机制不将该引用考虑在内。因此，只要所引用的对象的其他引用都被清除，垃圾回收机制就会释放该对象所占用的内存。也就是说，一旦不再需要，WeakMap 里面的键名对象和所对应的键值对会自动消失，不用手动删除引用。
 
 ## Proxy
 
