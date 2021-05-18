@@ -9,7 +9,7 @@ order: 8
 
 ES5 的对象属性名都是字符串，这容易造成 `属性名的冲突`。
 
-比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突，表示独一无二的值。这就是 ES6 引入 Symbol 的原因。
+比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突，表示独一无二的值。这就是 ES6 引入 `Symbol` 的原因。
 
 Symbol 函数前不能使用 new 命令，否则会报错。 **由于 Symbol 值不是对象，所以不能添加属性。**
 
@@ -49,7 +49,7 @@ let sym = Symbol('My symbol');
 
 ## BigInt
 
-JavaScript 所有`数字都保存成 64 位浮点数`，这给数值的表示带来了两大限制：
+JavaScript 所有`数字都保存成 64 位浮点数`，这给`数值`的表示带来了两大限制：
 
 -   数值的`精度只能到 53 个二进制位`，大于这个范围的整数，JavaScript 是无法精确表示的，这使得 JavaScript 不适合进行科学和金融方面的精确计算。
 
@@ -59,8 +59,8 @@ ES2020 引入了一种新的数据类型 `BigInt（大整数）`，来解决这�
 
 创建 BigInt 的方式有两种：
 
--   在一个整数字面量后面加 n
--   调用 BigInt 函数，该函数从字符串、数字等中生成 BigInt
+-   在一个整数字面量后面`加 n`
+-   调用 `BigInt` 函数，该函数从字符串、数字等中生成 BigInt
 
 ```js
 const bigint1 = 12n;
@@ -129,7 +129,7 @@ Set 实例的属性和方法：
 `WeakSet` 结构与 `Set` 类似，也是不重复的值的集合。但是，它与 Set 有两个区别。
 
 -   首先，WeakSet 的成员`只能是对象`，而不能是其他类型的值
--   其次，WeakSet 中的对象都是`弱引用`，即垃圾回收机制不考虑 WeakSet 对该对象的引用，也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象还存在于 WeakSet 之中。
+-   其次，WeakSet 中的对象都是`弱引用`，`即垃圾回收机制不考虑 WeakSet 对该对象的引用`。也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象还存在于 WeakSet 之中。
 
 ## Map
 
@@ -145,11 +145,11 @@ data['[object HTMLDivElement]']; // "metadata"
 
 上面代码原意是将一个 DOM 节点作为对象 data 的键，但是由于对象只接受字符串作为键名，所以 element 被自动转为字符串[object HTMLDivElement]。
 
-为了解决这个问题，ES6 提供了 `Map` 数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。
+为了解决这个问题，ES6 提供了 `Map` 数据结构。它类似于对象，也是键值对的集合，但是`“键”的范围不限于字符串`，各种类型的值（包括对象）都可以当作键。
 
 实例的属性和操作方法
 
--   map.size 属性返回 Map 结构的成员总数。
+-   map.size 属性返回 Map 结构的成员总数
 -   map.set(key, value) 设置键名 key 对应的键值为 value
 -   map.get(key) 读取 key 对应的键值
 -   map.has(key) 返回一个布尔值，表示某个键是否在当前 Map 对象之中
@@ -161,64 +161,12 @@ data['[object HTMLDivElement]']; // "metadata"
 WeakMap 结构与 Map 结构类似，也是用于生成键值对的集合。WeakMap 与 Map 的区别有两点。
 
 -   首先，WeakMap `只接受对象作为键名`（null 除外），不接受其他类型的值作为键名。
--   它的键名所引用的对象都是弱引用，即垃圾回收机制不将该引用考虑在内。因此，只要所引用的对象的其他引用都被清除，垃圾回收机制就会释放该对象所占用的内存。也就是说，一旦不再需要，WeakMap 里面的键名对象和所对应的键值对会自动消失，不用手动删除引用。
+-   它的键名所引用的对象都是`弱引用`，即`垃圾回收机制不将该引用考虑在内`。因此，只要所引用的对象的其他引用都被清除，垃圾回收机制就会释放该对象所占用的内存。也就是说，一旦不再需要，WeakMap 里面的键名对象和所对应的键值对会自动消失，不用手动删除引用。
 
 ## Proxy
 
-> 涉及面试题：Proxy 可以实现什么功能？
-
-如果你平时有关注 Vue 的进展的话，可能已经知道了在 Vue3.0 中将会通过 Proxy 来替换原本的 Object.defineProperty 来实现数据响应式。 Proxy 是 ES6 中新增的功能，它可以用来自定义对象中的操作。
-
-```js
-let p = new Proxy(target, handler);
-```
-
-target 代表需要添加代理的对象，handler 用来自定义对象中的操作，比如可以用来自定义 set 或者 get 函数。
-
-接下来我们通过 Proxy 来实现一个数据响应式
-
-```js
-let onWatch = (obj, setBind, getLogger) => {
-    let handler = {
-        get(target, property, receiver) {
-            getLogger(target, property);
-            return Reflect.get(target, property, receiver);
-        },
-        set(target, property, value, receiver) {
-            setBind(value, property);
-            return Reflect.set(target, property, value);
-        },
-    };
-    return new Proxy(obj, handler);
-};
-
-let obj = { a: 1 };
-let p = onWatch(
-    obj,
-    (v, property) => {
-        console.log(`监听到属性${property}改变为${v}`);
-    },
-    (target, property) => {
-        console.log(`'${property}' = ${target[property]}`);
-    },
-);
-p.a = 2; // 监听到属性a改变
-p.a; // 'a' = 2
-```
-
-在上述代码中，我们通过自定义 set 和 get 函数的方式，在原本的逻辑中插入了我们的函数逻辑，实现了在对对象任何属性进行读写时发出通知。
-
-当然这是简单版的响应式实现，如果需要实现一个 Vue 中的响应式，需要我们在 get 中收集依赖，在 set 派发更新，之所以 Vue3.0 要使用 Proxy 替换原本的 API。
-
-优点:
-
--   Proxy 无需一层层递归为每个属性添加代理，一次即可完成以上操作，性能上更好
--   并且原本的实现有一些数据更新不能监听到，但是 Proxy 可以完美监听到任何方式的数据改变
-
-缺点:
-
--   唯一缺陷可能就是浏览器的兼容性不好了。
+[Vue3.0 响应式原理](/frame/vue%20reactive#vue30-响应式原理)
 
 ## class
 
-[点击查看 class 具体介绍](extends#class、extends-实现继承)
+[ES6 class 实现继承](extends#class、extends-实现继承)
