@@ -221,8 +221,9 @@ reverse();
 const oldArrayProperty = Array.prototype;
 
 // 创建新对象，原型指向 oldArrayProperty ，再扩展新的方法不会影响原型
-const arrProto = Object.create(oldArrayProperty)
-[('push', 'pop', 'shift', 'unshift', 'splice')].forEach((methodName) => {
+const arrProto = Object.create(oldArrayProperty)[
+    ('push', 'pop', 'shift', 'unshift', 'splice')
+].forEach((methodName) => {
     arrProto[methodName] = function () {
         updateView(); // 触发视图更新
         oldArrayProperty[methodName].call(this, ...arguments);
@@ -329,3 +330,7 @@ const proxyData = reactive(data);
 ### Object.defineProperty 的优势如下:
 
 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题,而且无法用 polyfill 磨平
+
+-   Class 可以用 function 模拟
+-   Promise 可以用 callback 来模拟
+-   但是 Proxy 的功能不能用 Object.defineProperty 来模拟

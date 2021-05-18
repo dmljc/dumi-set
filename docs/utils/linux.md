@@ -3,7 +3,7 @@ toc: content
 order: 3
 ---
 
-# Linux 是什么
+# Linux
 
 `Linux 是服务端最流行的操作系统。`
 
