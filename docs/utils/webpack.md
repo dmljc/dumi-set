@@ -168,7 +168,7 @@ rules: [
 
 ```js
 new TerserWebpackPlugin({
-    test: /\.foo\.css$/i,   // 用来匹配文件。
+    test: /\.js(\?.*)?$/i   // 用来匹配文件。
     include: /\/includes/,  // 要包含的文件。
     parallel: Boolean || Number, // 多进程并发执行，提升构建速度, Number 启用多进程并发执行且设置并发数。
 }),
@@ -180,10 +180,11 @@ JS 是单线程，使用 HappyPack 开启 `多进程打包`，提高构建速度
 
 作者已经放弃维护，推荐使用 `thread-loader`
 
-## 处理图片、字体、媒体、等文件
+## 处理文件、图片、字体等
 
-file-loader 就是将文件在进行一些处理后（主要是处理文件名和路径、解析文件 url），并将文件移动到输出的目录中
-url-loader 一般与 file-loader 搭配使用，功能与 file-loader 类似，如果文件小于限制的大小。则会返回 base64 编码，否则使用 file-loader 将文件移动到输出的目录中
+`file-loader` 就是将`文件`在进行一些处理后（主要是处理文件名和路径、解析文件 url），`并将文件移动到输出的目录中`；
+
+`url-loader` 一般与 `file-loader` 搭配使用，功能与 `file-loader` 类似，如果文件`小于限制的大小`，则会返回 `base64` 编码，否则使用 `file-loader` 将文件移动到输出的目录中；
 
 ```js
 rules: {
@@ -201,7 +202,7 @@ rules: {
                         options: {
                             name: 'img/[name].[hash:8].[ext]'
                             //  name: 'media/[name].[hash:8].[ext]'
-                            //   name: 'fonts/[name].[hash:8].[ext]'
+                            //  name: 'fonts/[name].[hash:8].[ext]'
                         }
                     }
                 }
@@ -211,15 +212,49 @@ rules: {
 }
 ```
 
-图片压缩
+### 图片压缩
 
-image-webpack-loader
+`image-webpack-loader` PNG, JPEG, GIF, SVG and WEBP....
+
+```js
+rules: [
+    {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+            'file-loader',
+            {
+                loader: 'image-webpack-loader',
+                options: {
+                    mozjpeg: {
+                        progressive: true,
+                    },
+                    optipng: {
+                        enabled: false,
+                    },
+                    pngquant: {
+                        quality: [0.65, 0.9],
+                        speed: 4,
+                    },
+                    gifsicle: {
+                        interlaced: false,
+                    },
+                    webp: {
+                        quality: 75,
+                    },
+                },
+            },
+        ],
+    },
+];
+```
+
+## 处理第三方包
 
 ### IgnorePlugin 避免引入无用模块
 
 这是 webpack `内置插件`，它的作用是：`忽略第三方包指定目录，让这些指定目录不要被打包进去`。
 
-比如我们要使用 moment 这个第三方依赖库，该库主要是对时间进行格式化，并且支持多个国家语言。虽然我设置了语言为中文，但是在打包的时候，是会将所有语言都打包进去的。这样就导致包很大，打包速度又慢。对此，我们可以用 `IgnorePlugin` 使得指定目录被忽略，从而使得打包变快，文件变小。
+比如我们要使用 `moment` 这个第三方依赖库，该库主要是对时间进行格式化，并且支持多个国家语言。虽然我设置了语言为中文，但是在打包的时候，是会将所有语言都打包进去的。这样就导致包很大，打包速度又慢。对此，我们可以用 `IgnorePlugin` 使得指定目录被忽略，从而使得打包变快，文件变小。
 
 ```js
 const Webpack = require('webpack')
@@ -245,7 +280,7 @@ moment.locale('zh-cn');
 
 ### noParse
 
-`noParse` 对完全`不需要解析`的库进行忽略。忽略的文件中 不应该含有 import, require, define 的调用，或任何其他导入机制。忽略大型的 library 可以`提高构建性能`。
+`noParse` 对完全`不需要解析`的库进行忽略，可以`提高构建性能`。（忽略的文件中 不应该含有 import, require, define 的调用，或任何其他导入机制。）
 
 ```js
 module.exports = {
@@ -256,76 +291,92 @@ module.exports = {
 };
 ```
 
-## 基础包分离：
-
-使用 html-webpack-externals-plugin，将基础包通过 CDN 引入，不打入 bundle 中
-使用 SplitChunksPlugin 进行(公共脚本、基础包、页面公共文件)分离(Webpack4 内置) ，替代了 CommonsChunkPlugin 插件
-
-<!-- ## 提取页面公共资源 -->
-
-## 利用缓存提升二次构建速度
-
-babel-loader 开启缓存
-terser-webpack-plugin 开启缓存
-cache-loader 允许缓存以下 loaders 到（默认）磁盘或数据库
-
-```js
-...
-rules: [
-    {
-        test: /\.js$/,
-        use: ['cache-loader', 'babel-loader'],
-        include: path.resolve('src')
-    }
-]
-```
-
-DefinePlugin
-
-DefinePlugin 允许在 编译时 创建配置的`全局常量`，这在需要区分`开发模式`与`生产模式`进行不同的操作时，非常有用。例如，如果想在开发构建中进行日志记录，而不在生产构建中进行，就可以定义一个全局常量去判断是否记录日志。
-
-```js
-new webpack.DefinePlugin({
-    PRODUCTION: JSON.stringify(true),
-    VERSION: JSON.stringify('5fa3b9'),
-    BROWSER_SUPPORTS_HTML5: true,
-    TWO: '1+1',
-    'typeof window': JSON.stringify('object'),
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-});
-```
-
-CleanWebpackPlugin
-
-每次执行 npm run build 会发现 dist 文件夹里会残留上次打包的文件，这里我们推荐一个 plugin 来帮我们在打包输出前清空文件夹 clean-webpack-plugin
-
 ### DllPlugin
 
-`DllPlugin` 和 `DllReferencePlugin` 用某种方法实现了`拆分 bundles`，同时还大幅度提升了`构建的速度`。"DLL" 一词代表微软最初引入的动态链接库。
+对于开发项目中不经常会变更的`静态依赖文件`。类似于我们的 `elementUi`、`vue` 全家桶等等。因为很少会变更，所以我们不希望这些依赖要被集成到每一次的`构建`逻辑中去。
 
-此插件用于在单独的 webpack 配置中创建一个 dll-only-bundle。 此插件会生成一个名为 manifest.json 的文件，这个文件是用于让 DllReferencePlugin 能够映射到相应的依赖上。
+这样做的好处是每次更改我本地代码时，`webpack` 只需要`打包`我项目本身的文件代码，而`不会再去编译第三方库`。以后只要我们不升级第三方包，那么 webpack 就不会对这些库去打包，这样可以快速的提高`打包`的速度。
 
-webpack.vendor.config.js
+webpack.dll.config.js
 
 ```js
 const path = require('path');
-
-new webpack.DllPlugin({
-    context: __dirname, // manifest 文件中请求的 context (默认值为 webpack 的 context)
-    name: '[name]_[fullhash]', // 暴露出的 DLL 的函数名（TemplatePaths：[fullhash] & [name] ）
-    path: path.join(__dirname, 'manifest.json'), // manifest.json 文件的 绝对路径（输出文件）
-});
+const webpack = require('webpack');
+module.exports = {
+    entry: {
+        vendor: ['vue', 'element-ui'], // 你想要打包的模块的数组
+    },
+    output: {
+        path: path.resolve(__dirname, 'static/js'), // 打包后文件输出的位置
+        filename: '[name].dll.js',
+        library: '[name]_library',
+        // 这里需要和webpack.DllPlugin中的`name: '[name]_library',`保持一致。
+    },
+    plugins: [
+        new webpack.DllPlugin({
+            path: path.resolve(__dirname, '[name]-manifest.json'),
+            name: '[name]_library',
+            context: __dirname,
+        }),
+    ],
+};
 ```
 
-webpack.app.config.js
+在 `package.json` 中配置如下命令
 
 ```js
-new webpack.DllReferencePlugin({
-    context: __dirname, // 绝对路径） manifest (或者是内容属性)中请求的上下文
-    manifest: require('./manifest.json'), // 包含 content 和 name 的对象，或者是一个字符串 —— 编译时用于加载 JSON manifest 的绝对路径
-    scope: 'xyz', // dll 中内容的前缀
-});
+"dll": "webpack --config build/webpack.dll.config.js"
 ```
+
+接下来在我们的 `webpack.config.js` 中增加以下代码
+
+```js
+module.exports = {
+    plugins: [
+        new webpack.DllReferencePlugin({
+            context: __dirname,
+            manifest: require('./vendor-manifest.json'),
+        }),
+        new CopyWebpackPlugin([
+            // 拷贝生成的文件到dist目录 这样每次不必手动去cv
+            {
+                from: 'static',
+                to: 'static',
+            },
+        ]),
+    ],
+};
+```
+
+执行
+
+```js
+npm run dll
+```
+
+会发现生成了我们需要的集合第三地方 代码的 `vendor.dll.js` 我们需要在 `html`文件中`手动引入`这个 js 文件。
+
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <script src="static/js/vendor.dll.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+</html>
+```
+
+如果我们没有`更新第三方`依赖包，就不必 `npm run dll`。直接执行 `npm run dev` 和 `npm run build` 的时候会发现我们的`打包速度`明显有所提升。因为我们已经通过`dllPlugin`将第三方依赖包`抽离`出来了。
+
+## CleanWebpackPlugin
+
+每次执行 `npm run build` 会发现 `dist` 文件夹里会残留上次打包的文件，这里我们推荐一个 plugin 来帮我们在打包输出前`清空文件夹` clean-webpack-plugin。
 
 ## Tree Shaking
 
@@ -340,13 +391,13 @@ new webpack.DllReferencePlugin({
 ```js
 // .babelrc
 {
-  "presets": [
-    ["@babel/preset-env",
-      {
-        "modules": false
-      }
+    "presets": [
+        ["@babel/preset-env",
+            {
+                "modules": false
+            }
+        ]
     ]
-  ]
 }
 ```
 
@@ -376,6 +427,12 @@ module: {
 }
 ```
 
+## bundle 分析
+
+`webpack-bundle-analyzer` 一个 plugin 和 CLI 工具，它将 `bundle` 内容展示为一个便捷的、交互式、可缩放的树状图形式。
+
+![analyzer](/images/webpack/analyzer.png)
+
 ## 核心工具
 
 `Tapable` 是 webpack 的一个`核心工具`。在 webpack 中的许多对象都扩展自 Tapable 类。 它对外暴露了 `tap`，`tapAsync` 和 `tapPromise` 等方法，插件可以使用这些方法向 webpack 中注入`自定义构建的步骤`，这些步骤将在`构建过程中触发`。
@@ -392,7 +449,7 @@ compiler.hooks.compile.tap('MyPlugin', (params) => {
 });
 ```
 
-### run 阶段
+### 运行阶段
 
 在 `run 阶段` 则需使用 `tapAsync` 或 `tapPromise`（以及 `tap`）方法。
 
