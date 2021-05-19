@@ -17,9 +17,9 @@ order: 5
 -   可能是异步更新、也可能是同步更新
 -   可能会被合并
 
-### 不可变值
+<!-- ### 不可变值 -->
 
-```js
+<!-- ```js
 // 定义state
 this.state = {
     count: 0,
@@ -52,11 +52,11 @@ this.setState({
     // 或者
     obj: Object.assign({}, this.state.obj, { a: 100 })
 })
-```
-
+``` -->
+<!--
 ### 同步还是异步
 
-可能是 `同步更新` 也可能是 `异步更新`。
+可能是 `同步更新` 也可能是 `异步更新`。 -->
 
 **直接 setState 是 异步 更新的：**
 
@@ -106,7 +106,7 @@ document.body.addEventListener('click', () => {
 
 **state 异步更新的话，若传入对象 更新前会被合并；传入函数，则不会被合并**
 
-```js
+<!-- ```js
 // 传入对象，会被合并(类似 Object.assign) 执行结果只一次 +1
 this.setState({
     count: this.state.count + 1,
@@ -134,118 +134,63 @@ this.setState((prevState, props) => {
         count: prevState.count + 1,
     };
 });
-```
+``` -->
 
 ## 生命周期
 
-### constructor
+### 挂载
 
-在 React `组件挂载之前`，会调用它的构造函数，初始化 state。
+当组件实例被创建并插入 DOM 中时，其生命周期调用顺序如下：
 
-在为 React.Component `子类实现构造函数时`，应在其他语句之前前调用 `super(props)`。
-否则，this.props 在构造函数中可能会出现 this 未定义。
+-   **constructor**() <== UNSAFE_componentWillMount <== componentWillMount() // 初始化 state
+-   static getDerivedStateFromProps(props, state) // 新增 不常用 是否更新内容
+-   **render()** // 根据 state 和 props 触发页面的更新渲染。
+-   **componentDidMount()** // 插入 DOM 树中 立即调用，适合 ajax 请求
 
-**如果不初始化 state 或不进行方法绑定，则不需要为 React 组件实现构造函数。**
+### 更新
 
-### componentWillMount
+当组件的 props 或 state 发生变化时会触发更新。组件更新的生命周期调用顺序如下：
 
-`UNSAFE_componentWillMount` 在`挂载之前`被调用。
-它在 render() 之前调用。因此在此方法中同步调用 `setState()` 不会触发额外渲染。
+-   static getDerivedStateFromProps(props, state) // 新增 不常用
+-   shouldComponentUpdate(nextProps, nextState) // SCU 因性能优化而存在,不建议深层比较
+-   **render()**
+-   getSnapshotBeforeUpdate(prevProps, prevState) <== UNSAFE_componentWillUpdate // 新增 不常用
+-   **componentDidUpdate()** <== UNSAFE_componentWillReceiveProps // 在更新后会被立即调用，此处对 DOM 进行操
 
-### componentDidMount
+### 卸载
 
-会在组件`挂载后`（插入 DOM 树中）立即调用。依赖于 DOM 节点的初始化应该放在这里。
-如需通过`网络请求`获取数据，此处是实例化请求的好地方。
+当组件从 DOM 中移除时会调用如下方法：
 
-这个方法是比较适合`添加订阅`的地方。如果添加了订阅，请不要忘记在 `componentWillUnmount()` 里`取消订阅`。
+-   **componentWillUnmount()**
 
-直接调用 `setState()`。它将`触发额外渲染`，但此渲染会发生在`浏览器更新屏幕之前`。
-**如此保证了即使在 render() 两次调用的情况下，用户也不会看到中间状态。**
+会在组件`卸载及销毁之前`直接调用。在此方法中执行必要的清理操作，例如，`清除 timer`，`取消网络请求`或清除在 `componentDidMount()` 中创建的`订阅`等。
 
-### componentWillReceiveProps
+### 错误处理
 
-只会在组件的 `props 更新时调用`。调用 this.setState() 通常不会触发 `UNSAFE_componentWillReceiveProps()`。
+当渲染过程，生命周期，或子组件的构造函数中抛出错误时，会调用如下方法：
 
-### shouldComponentUpdate
+-   static getDerivedStateFromError() // 新增 不常用
+-   componentDidCatch()
 
-当 `props 或 state 发生变化时`，会在`渲染执行之前`被调用。返回值默认为 true。**首次渲染或使用 forceUpdate() 时不会调用该方法。**
+官方为什么改变生命周期？？
 
-此方法`仅作为性能优化`的方式而存在。不建议在进行深层比较或使用 `JSON.stringify()`。这样非常影响效率，且会损害性能。
+可能原因是：UNSAFE 这里并不是示意不平安的意思，它只是不倡议持续应用，并示意应用这些生命周期的代码可能在将来的 React 版本（目前 React17 还没有齐全破除）`存在缺点`，如 React `Fiber 异步渲染`的呈现。
 
-### componentWillUpdate
-
-### componentDidUpdate
-
-### componentWillUnmount
-
-```js
-class Parent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { data: 0 };
-        this.setNewNumber = this.setNewNumber.bind(this);
-        console.log('111===constructor');
-    }
-
-    setNewNumber() {
-        this.setState({ data: this.state.data + 1 });
-    }
-    render() {
-        return (
-            <div>
-                <button onClick={this.setNewNumber}>INCREMENT</button>
-                <Child myNumber={this.state.data}></Child>
-            </div>
-        );
-    }
-}
-
-class Child extends React.Component {
-    // UNSAFE_componentWillMount
-    componentWillMount() {
-        console.log('222===Component WILL MOUNT!');
-    }
-    componentDidMount() {
-        console.log('333===Component DID MOUNT!');
-    }
-    // UNSAFE_componentWillReceiveProps
-    componentWillReceiveProps(newProps) {
-        console.log('444===Component WILL RECEIVE PROPS!');
-    }
-    shouldComponentUpdate(newProps, newState) {
-        console.log('555===shouldComponentUpdate');
-        return true;
-    }
-    // UNSAFE_componentWillUpdate
-    componentWillUpdate(nextProps, nextState) {
-        console.log('666===Component WILL UPDATE!');
-    }
-    componentDidUpdate(prevProps, prevState) {
-        console.log('777===Component DID UPDATE!');
-    }
-    componentWillUnmount() {
-        console.log('888===Component WILL UNMOUNT!');
-    }
-
-    render() {
-        return (
-            <div>
-                <h3>{this.props.myNumber}</h3>
-            </div>
-        );
-    }
-}
-```
-
-### 过时的生命周期方法
-
-以下生命周期方法标记为`过时`。这些方法仍然有效，但不建议在新代码中使用它们。该名称将继续使用至 `React 17`。可以使用 `rename-unsafe-lifecycles codemod` 自动更新你的组件。
+### getDerivedStateFromProps
 
 ```js
-UNSAFE_componentWillMount;
-UNSAFE_componentWillReceiveProps;
-UNSAFE_componentWillUpdate;
+static getDerivedStateFromProps(props, state)
 ```
+
+会在调用 `render` 方法之前调用，并且在`初始挂载`及后续`更新`时都会被调用。它应返回一个对象来更新 `state`，如果返回 `null` 则`不更新`任何内容。
+
+### getSnapshotBeforeUpdate
+
+```js
+getSnapshotBeforeUpdate(prevProps, prevState);
+```
+
+在`最近一次渲染输出（提交到 DOM 节点）之前调用`。它使得组件能在发生更改之前从 DOM 中捕获一些信息（例如，滚动位置）。此生命周期方法的任何返回值将作为参数传递给 componentDidUpdate()。
 
 [点击在线查看 组件生命周期](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
 
