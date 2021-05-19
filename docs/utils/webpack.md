@@ -483,3 +483,4 @@ compiler.hooks.run.tapPromise(
 
 -   主要是内部效率的优化
 -   对比 webpack 4，没有太多使用上的改动
+-   webpack 5.0 旨在减少配置的复杂度，使其更容易上手
