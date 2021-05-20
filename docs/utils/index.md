@@ -84,7 +84,7 @@ git reset --hard commit_id
 
 ```js
 // 修改最新的 commit 信息
-git commit -amend
+git commit --amend
 
 // 修改指定的 commit 修改
 git rebase -i commit_id  // 父级commit_id

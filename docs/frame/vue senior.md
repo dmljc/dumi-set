@@ -5,8 +5,6 @@ order: 3
 
 # Vue 高级特性
 
-<!-- ## 自定义 v-model -->
-
 ## $nextTick
 
 因为 vue 是异步渲染 data 改变后 Dom 不会立即渲染 $nextTick 会在 Dom 渲染之后被触发 以获取最新的 Dom 节点
@@ -25,6 +23,24 @@ addItem () {
     })
 }
 ```
+
+$nextTick 实现原理：主要使用了`宏任务`和`微任务`。根据执行环境分别尝试采用
+
+> MutationObserver 监视对 DOM 树做的更改。
+> setImmediate 该方法可以用来替代 `setTimeout(fn, 0)`。
+
+-   `Promise.then`
+-   `MutationObserver`
+-   `setImmediate`
+-   如果以上都不行则采用 `setTimeout`
+
+定义了一个`异步方法`，多次调用 `nextTick` 会将方法存入`队列`中，通过这个异步方法`清空当前队列`。
+
+======= > 以下是官网原文：< =======
+
+Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 watcher 被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 DOM 操作是非常重要的。
+
+然后，在下一个的事件循环“tick”中，Vue 刷新队列并执行实际 (已去重的) 工作。`Vue 在内部对异步队列尝试使用原生的 Promise.then、MutationObserver 和 setImmediate，如果执行环境不支持，则会采用 setTimeout(fn, 0) 代替。`
 
 ## slot
 

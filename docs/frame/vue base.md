@@ -311,7 +311,9 @@ router.afterEach((to, from) => {
 
 ### 基础使用
 
-vuex 是专门为 vue 提供的`全局状态管理系统`，用于多个组件中`数据共享`、`数据缓存`等。（`无法持久化`、内部核心原理是`通过创造一个全局实例 new Vue`）。
+vuex 是专门为 vue 提供的`全局状态管理系统`，用于多个组件中`数据共享`、`数据缓存`等。但是 `无法持久化`。
+
+<!-- 我们知道了vuex是利用vue的mixin混入机制，在beforeCreate钩子前混入vuexInit方法，vuexInit方法实现了store注入vue组件实例，并注册了vuex store的引用属性$store。 -->
 
 ![vuex](/images/frame/vuex.png)
 
@@ -320,6 +322,14 @@ vuex 是专门为 vue 提供的`全局状态管理系统`，用于多个组件�
 -   Mutation：是唯一更改 store 中状态的方法，且必须是`同步函数` (commit) 如: store.commit('increment')。
 -   Action：用于提交 mutation，而`不是直接变更状态`，可以包含任意`异步`操作 (dispatch) 如: this.store.dispatch('increment')。
 -   Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中。
+
+**vuex 的 store 是如何挂载注入到组件中呢？**
+
+Vuex 的双向绑定通过调用 `new Vue` 实现，然后通过 `Vue.mixin` 注入到 Vue 组件的`生命周期`中，再通过劫持 state.get 将数据放入组件 data 中。
+
+**vuex 如何响应式更新状态呢？**
+
+借助 vue 的 data 是响应式，将 state 存入 vue 实例组件的 data 中；Vuex 的 getters 则是借助 vue 的计算属性 computed 实现数据实时监听。
 
 ### 数据丢失
 
