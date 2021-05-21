@@ -9,18 +9,29 @@ order: 4
 
 整体思路是 `数据劫持` + `观察者模式`
 
-对象内部通过 `defineReactive` 方法，使用 `Object.defineProperty` 将属性进行`劫持`（只会劫持已经存在的属性），数组则是通过`重写数组`方法来实现。当页面使用对应属性时，每个属性都拥有自己的 `dep` 属性，存放他所依赖的 `watcher`（依赖收集），当属性变化后会通知自己对应的 `watcher` 去更新(派发更新)。
+对象内部通过 `defineReactive` 方法，使用 `Object.defineProperty` 将属性进行`劫持`（只会劫持已经存在的属性），数组则是通过`重写数组`方法来实现。当页面使用对应属性时，每个属性都拥有自己的 `属性订阅器` dep 属性，存放他所依赖的 `订阅者` watcher，当属性变化后会通知自己对应的 `订阅者` 去`更新`(派发更新)。
+
+> **数据监听器 Observer** ，能够对数据对象的所有属性进行监听，如有变动可拿到最新值并通知订阅者
+>
+> **指令解析器 Compile** ，对每个元素节点的指令进行扫描和解析，根据指令模板替换数据，以及绑定相应的更新函数
+>
+> **订阅者 Watcher** ，作为连接 Observer 和 Compile 的桥梁，能够订阅并收到每个属性变动的通知，执行指令绑定的相应回调函数，从而更新视图
+
+<!-- 上述流程如图所示：
+
+![gFwsRj.png](https://t1.picb.cc/uploads/2019/09/16/gFwsRj.png) -->
 
 ```js
 // 重新定义属性，监听起来
 function defineReactive(target, key, value) {
+    var dep = new Dep();   // 属性订阅器(dep) Dep 做依赖收集
     // 深度监听
     observer(value);
 
     // 核心 API 兼容性在ie9以及以上
     Object.defineProperty(target, key, {
         get() {
-            // 需要做依赖收集过程 这里代码没写出来
+            dep.depend()    // 需要做依赖收集
             return value;
         },
         set(newValue) {
@@ -33,7 +44,7 @@ function defineReactive(target, key, value) {
                 value = newValue;
 
                 // 触发更新视图
-                updateView();
+                updateView();  ==> // dep.notify(); 通知所有订阅者
             }
         },
     });
@@ -45,12 +56,6 @@ function observer(target) {
         // 不是对象或数组
         return target;
     }
-
-    // 污染全局的 Array 原型
-    // Array.prototype.push = function () {
-    //     updateView()
-    //     ...
-    // }
 
     if (Array.isArray(target)) {
         target.__proto__ = arrProto;
@@ -79,27 +84,6 @@ function updateView() {
     console.log('视图更新');
 }
 
-// 准备数据
-const data = {
-    name: 'zhangsan',
-    age: 20,
-    info: {
-        address: '杭州', // 需要深度监听
-    },
-    nums: [10, 20, 30],
-};
-
-// 监听数据
-observer(data);
-
-// 测试
-// data.name = 'lisi'
-// data.age = 21
-// // console.log('age', data.age)
-// data.x = '100' // 新增属性，监听不到 —— 所以有 Vue.set
-// delete data.name // 删除属性，监听不到 —— 所有已 Vue.delete
-// data.info.address = '上海' // 深度监听
-data.nums.push(4); // 监听数组
 ```
 
 ## defineProperty 缺陷
@@ -127,38 +111,9 @@ vm.b = 2;
 this.$set(this.someObject, 'b', 2);
 ```
 
-## Vue.set 方法原理
+### Vue.set 方法原理
 
-因为响应式数据 我们给对象和数组本身都增加了**ob**属性，代表的是 Observer 实例。当给对象新增不存在的属性 首先会把新的属性进行响应式跟踪 然后会触发对象**ob**的 dep 收集到的 watcher 去更新，当修改数组索引时我们调用数组本身的 splice 方法去更新数组
-
-```js
-export function set(target: Array | Object, key: any, val: any): any {
-    // 如果是数组 调用我们重写的splice方法 (这样可以更新视图)
-    if (Array.isArray(target) && isValidArrayIndex(key)) {
-        target.length = Math.max(target.length, key);
-        target.splice(key, 1, val);
-        return val;
-    }
-    // 如果是对象本身的属性，则直接添加即可
-    if (key in target && !(key in Object.prototype)) {
-        target[key] = val;
-        return val;
-    }
-    const ob = (target: any).__ob__;
-
-    // 如果不是响应式的也不需要将其定义成响应式属性
-    if (!ob) {
-        target[key] = val;
-        return val;
-    }
-
-    // 将属性定义成响应式的
-    defineReactive(ob.value, key, val);
-    // 通知视图更新
-    ob.dep.notify();
-    return val;
-}
-```
+因为响应式数据 我们给`对象`和`数组`本身都增加了 `Observer` 实例。当给对象新增不存在的属性 首先会把新的属性进行`响应式跟踪` 然后会触发对象 `Observer` 的 dep 收集到的 `订阅者` 去更新，当修改数组索引时我们调用数组本身的 `splice` 方法去更新数组。
 
 ### 无法监听数组变化
 
@@ -232,86 +187,47 @@ const arrProto = Object.create(oldArrayProperty)[
 });
 ```
 
-**通过 Vue 源码部分查看，我们就能知道 Vue 框架是通过递归遍历对象和重写数组的原型，从而达到利用 Object.defineProperty() 也能对对象和数组（部分方法的操作）进行监听。**
-
-为了解决以上两个缺陷，Vue 3.0 打算 用 Proxy 改写双向绑定的实现。
+为了解决以上两个缺陷，Vue 3.0 打算 用 `Proxy` 改写双向绑定的实现。
 
 ## Vue3.0 响应式原理
 
 ```js
-// 创建响应式
-function reactive(target = {}) {
-    if (typeof target !== 'object' || target == null) {
-        // 不是对象或数组，则返回
-        return target;
-    }
-
-    // 代理配置
-    const proxyConf = {
-        get(target, key, receiver) {
-            // 只处理本身（非原型的）属性
-            const ownKeys = Reflect.ownKeys(target);
-            if (ownKeys.includes(key)) {
-                console.log('get', key); // 监听
-            }
-
-            const result = Reflect.get(target, key, receiver);
-
-            // 深度监听
-            // 性能如何提升的？
-            return reactive(result);
-        },
-        set(target, key, val, receiver) {
-            // 重复的数据，不处理
-            if (val === target[key]) {
-                return true;
-            }
-
-            const ownKeys = Reflect.ownKeys(target);
-            if (ownKeys.includes(key)) {
-                console.log('已有的 key', key);
-            } else {
-                console.log('新增的 key', key);
-            }
-
-            const result = Reflect.set(target, key, val, receiver);
-            console.log('set', key, val);
-            // console.log('result', result) // true
-            return result; // 是否设置成功
-        },
-        deleteProperty(target, key) {
-            const result = Reflect.deleteProperty(target, key);
-            console.log('delete property', key);
-            // console.log('result', result) // true
-            return result; // 是否删除成功
-        },
-    };
-
-    // 生成代理对象
-    const observed = new Proxy(target, proxyConf);
-    return observed;
-}
-
-// 测试数据
-const data = {
-    name: 'zhangsan',
-    age: 20,
-    info: {
-        city: 'hangzhou',
-        a: {
-            b: {
-                c: {
-                    d: {
-                        e: 100,
-                    },
-                },
-            },
-        },
+// 生成代理对象
+const observed = new Proxy(target, {
+    get(target, key, receiver) {
+        const ownKeys = Reflect.ownKeys(target);
+        if (ownKeys.includes(key)) {
+            console.log('get', key); // 监听
+        }
+        const result = Reflect.get(target, key, receiver);
+        // 深度监听
+        return reactive(result);
     },
-};
+    set(target, key, val, receiver) {
+        // 重复的数据，不处理
+        if (val === target[key]) {
+            return true;
+        }
 
-const proxyData = reactive(data);
+        const ownKeys = Reflect.ownKeys(target);
+        if (ownKeys.includes(key)) {
+            console.log('已有的 key', key);
+        } else {
+            console.log('新增的 key', key);
+        }
+
+        const result = Reflect.set(target, key, val, receiver);
+        return result; // 是否设置成功
+    },
+    deleteProperty(target, key) {
+        const result = Reflect.deleteProperty(target, key);
+        return result; // 是否删除成功
+    },
+});
 ```
+
+`Reflect` 对象与 `Proxy` 对象一样，也是 ES6 为了`操作对象`而提供的新 API。
+主要是将 `Object` 对象的一些明显`属于语言内部的方法`（比如 Object.defineProperty），放到 `Reflect 对象上`。
 
 ### Proxy 优势如下:
 
