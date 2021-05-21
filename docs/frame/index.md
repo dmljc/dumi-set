@@ -24,11 +24,11 @@ order: 1
 
 ## 如何解决痛点
 
-1、使用业界优秀的脚手架搭 create-react-app 建项目
-2、第三方依赖使用最高的稳定版本
-3、技术栈迁移，全面拥抱 react rooks
-3、通用组件和函数重构
-4、解决长列表性能优化和潜在的 bug
+-   使用业界优秀的脚手架搭 create-react-app 建项目
+-   第三方依赖的优化
+-   技术栈迁移，全面拥抱 react rooks (更好的代码组织，逻辑抽离)
+-   通用组件和函数重构 (简短，高效)
+-   解决长列表性能优化和潜在的 bug
 
 ### create-react-app
 
@@ -41,7 +41,65 @@ order: 1
 
 第一种方式相对第二种略复杂一些，`AntDesign4` 官方也开始推荐 `craco` 了，今天主要在这里详细讨论一下 `craco` 的使用。
 
-```js
+### 第三方依赖的优化
+
+对时间的格式化放弃 moment，使用 dayjs，原因如下：
+
+-   `moment` 的功能强大但是体积也最大，moment.min.js 的体积为 `51K`，dayjs.min.js 体积为`7K`
+-   `moment` 作者已经放弃维护 monent，dayjs 则在长期维护中
+-   接口几乎完全一致，相互切换的学习成本极低
+
+### 放弃 redux
+
+我们放弃了 redux，实现了一个简易版的 redux 来存储数据，原因如下：
+
+-   redux 虽然很成熟，但是 使用和维护成本有点高，相比不引入，引入是有成本的
+-   对我们项目而言 简易版的 redux 足够
+
+### 针对长列表的性能问题
+
+-   优化交互 (把列表中公用的下拉选项抽离到独立区域，极大的减少 dom 节点的渲染)
+-   引入 `react-virtualized` 虚拟滚动
+
+### 定时器
+
+组件卸载之前把定时器 `setTimeout` 和 `setInterval`，手动卸载掉，以免造成内存泄漏。
+
+### 通用函数优化
+
+比如：数组去重复，原逻辑是使用双重 for 循环方式去重，优化方案是：es6 set，简洁并且高效
+
+### 优化搜索性能
+
+防抖 和 节流优化 自定义 react hooks
+
+### 前端 数据缓存
+
+localStorage
+
+## 公共部分抽离包
+
+通用组件、函数、工具、自定义 hooks 等抽离公共包独立维护，并提供给兄弟部门使用，减少了开发成本，提高了复用性。
+
+### webpack 配置优化
+
+-   `CssMinimizerWebpackPlugin` 优化 和 压缩 CSS
+-   `babel-loader` 明确范围搜索， 开启缓存
+
+-   `terser-webpack-plugin` 多进程并发执行
+-   `image-webpack-loader` 压缩图片
+
+-   `IgnorePlugin` 避免引入无用模块
+-   `noParse` 对完全不需要解析的库进行忽略
+-   `DllPlugin` 抽离第三方包
+
+## 重构后的收益
+
+解决了现有的痛点，提升了用户体验，降低了维护成本，得到了客户和领导的认可。为后续项目的重构积累了经验。
+
+<!-- https://juejin.cn/post/6844903597092651015 -->
+
+<!-- ```js
 const CracoLessPlugin = require('craco-less')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
@@ -76,8 +134,4 @@ style: {
         plugins: [require('@tailwindcss/postcss7-compat'), require('autoprefixer')]
     }
 }
-```
-
-## 重构后的收益
-
-<!-- https://juejin.cn/post/6844903597092651015 -->
+``` -->
