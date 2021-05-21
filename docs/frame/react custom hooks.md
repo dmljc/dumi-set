@@ -102,7 +102,7 @@ export default (fn, initTime = 50, deps = []) => {
     let [time, setTime] = useState(initTime);
 
     useEffect(() => {
-        let now = Date.now();
+        let now = +new Date();
         if (now - last.current >= time) {
             fn();
             last.current = now;
@@ -114,3 +114,41 @@ export default (fn, initTime = 50, deps = []) => {
     return [cancel];
 };
 ```
+
+<!-- ## useTimeout
+
+useTimeout.js
+``` js
+import { useEffect } from 'react';
+
+export default (fn, delay) {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fn();
+        }, delay);
+
+        return () => {
+            clearTimeout(timer); // 移除定时器
+        };
+    }, [delay]);
+}
+```
+
+## useInterval
+
+useInterval.js
+``` js
+import { useEffect } from 'react';
+
+export default (fn, delay) {
+    useEffect(() => {
+        const timer = setInterval(() => {
+            fn();
+        }, delay);
+
+        return () => {
+            clearInterval(timer); // 移除定时器
+        };
+    }, [delay]);
+}
+``` -->
