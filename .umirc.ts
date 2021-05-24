@@ -22,10 +22,10 @@ export default defineConfig({
             { title: '框架', path: '/frame' },
             // { title: '可视化', path: '/visual' },
             // { title: '每日一题', path: '/questions' },
-            {
-                title: 'JS Bin',
-                path: 'https://jsbin.com/punigik/edit?js,console',
-            },
+            // {
+            //     title: 'JS Bin',
+            //     path: 'https://jsbin.com/punigik/edit?js,console',
+            // },
         ],
     },
     // more config: https://d.umijs.org/config
