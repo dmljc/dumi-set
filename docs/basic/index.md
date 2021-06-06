@@ -220,6 +220,96 @@ get 和 post 还有一个重大区别，简单的说：
 
 3、并不是所有浏览器都会在 post 中发送两次包，Firefox 就只发送一次。
 
+## for in 和 for of
+
+> for in 循环是用于遍历对象的，它可以用来遍历数组吗？
+
+答案是 可以的，因为数组在某种意义上也是对象，但是如果用其遍历数组会存在一些隐患：`其会遍历数组原型链上的属性`。
+
+-   for in 遍历对象场景：
+
+```js
+let obj = {
+    name: 'zfc',
+    age: 18,
+};
+
+for (let key in obj) {
+    console.log(key); // name age
+    console.log(obj[key]); // zfc 18
+}
+
+// 但是如果在 Object 原型链上添加一个方法，会遍历到原型链上的方法
+Object.prototype.test = function () {};
+
+for (let key in obj) {
+    console.log(key); // name age test
+    console.log(obj[key]); // zfc 18 ƒ () {}
+}
+
+// hasOwnProperty 方法可以判断某属性是否是该对象的实例属性
+for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+        console.log(key); // name age
+        console.log(obj[key]); // zfc 18
+    }
+}
+```
+
+-   for in 遍历数组场景：
+
+```js
+let arr = [1, 2];
+
+for (let key in arr) {
+    console.log(key); // 会打印数组的 下标 0, 1
+    console.log(arr[key]); // 会打印数组的 元素 1, 2
+}
+
+// 但是如果在 Array 原型链上添加一个方法，
+Array.prototype.test = function () {};
+
+for (let key in arr) {
+    console.log(arr[key]); // 此时会打印 1, 2, ƒ () {}
+}
+```
+
+因为我们不能保证项目代码中不会对`数组原型链`进行操作，也不能保证引入的第三方库不对其进行操作，所以不要使用 for in 循环来遍历数组。
+
+-   for of 只能遍历数组（不包括数组原型链上的属性和方法）
+
+```js
+let arr = [1, 2];
+
+for (let value of arr) {
+    console.log(value); // 会打印数组的 元素 1, 2
+}
+```
+
+因为能够被 for...of 正常遍历的，都需要实现一个遍历器 `Iterator`。而数组、字符串、Set、Map 结构，早就内置好了 Iterator（迭代器），它们的原型中都有一个 Symbol.iterator 方法，而 Object 对象并没有实现这个接口，使得它无法被 for...of 遍历。
+
+如何让对象可以被 for of 遍历，当然是给它添加遍历器，代码如下：
+
+```js
+Object.prototype[Symbol.iterator] = function () {
+    let _this = this;
+    let index = 0;
+    let length = Object.keys(_this).length;
+    return {
+        next: () => {
+            let value = _this[index];
+            let done = index >= length;
+            index++;
+            return { value, done };
+        },
+    };
+};
+```
+
+<Alert type="warning">
+整体来说直接用来遍历对象的目前只有 for in，其他的都是遍历数组用的。
+</Alert>
+
 ## 数组去重
 
 **1、双重 for 循环 (如果前一个值与后一个值相等，那么就去掉后一个值)**
@@ -304,6 +394,56 @@ let arr = [1, 'a', 'a', 'b', 'd', 'e', 'e', 1, 0];
 let test = (arr) => Array.from(new Set(arr));
 
 test(arr); // [1, "a", "b", "d", "e", 0]
+```
+
+## 数组排序
+
+数组排序比较常用的：`冒泡排序`、`快速排序`
+
+-   冒泡排序：
+
+从数组中随便拿一个数与后一位比较，如果前者比后者大，那么两者交换位置，从而遍历数组可以得到排序的效果。
+
+```js
+let arr = [1, 9, 4, 50, 49, 6, 3, 2];
+let test = (arr) => {
+    for (let i = 0, len = arr.length; i < len - 1; i++) {
+        for (let j = i + 1, len = arr.length; j < len; j++) {
+            let tempi = arr[i]; // 获取第一个值，并与后一个值比较
+            let tempj = arr[j];
+            if (tempi > tempj) {
+                arr[i] = tempj;
+                arr[j] = tempi; // 如果前一个值比后一个值大，那么相互交换
+            }
+        }
+    }
+    console.log(arr); // [1, 2, 3, 4, 6, 9, 49, 50]
+};
+test(arr);
+```
+
+-   快速排序：
+
+找出数组中间那一个值，然后用这个值跟数组里面的值相比较，大于此值的放在一边，小于的也放在一边， 然后用 concat()合并，再进行比较，如此反复。
+
+```js
+let arr = [1, 9, 4, 50, 49, 6, 3, 2];
+let test = (arr) => {
+    if (arr.length <= 1) return arr; // 如果数组只有一位，就没有必要比较了
+    let index = Math.floor(arr.length / 2); // 获取中间值的索引
+    let cur = arr.splice(index, 1); // 截取中间值，如果此处使用 cur=arr[index]; 那么将会出现无限递归的错误
+    let left = [];
+    let right = []; // 小于中间值的放在left数组里，大于的放在right数组
+    for (let i = 0, len = arr.length; i < len; i++) {
+        if (cur > arr[i]) {
+            left.push(arr[i]);
+        } else {
+            right.push(arr[i]);
+        }
+    }
+    return test(left).concat(cur, test(right)); // 通过递归，上一轮比较好的数组合并，并且再次进行比较
+};
+test(arr);
 ```
 
 ## 函数式编程
@@ -511,3 +651,5 @@ document.addEventListener(
     throttle(() => console.log('触发了滚动事件'), 1000),
 );
 ```
+
+<!-- ## 设计模式 -->
