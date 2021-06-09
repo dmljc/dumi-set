@@ -140,3 +140,92 @@ new Promise((resolve, reject) => {
 宏任务包括 `script` ， `setTimeout` ，`setInterval` ，`setImmediate` ，I/O ，UI rendering。
 
 这里很多人会有个误区，认为微任务快于宏任务，其实是错误的。因为宏任务中包括了 `script` ，浏览器会先执行一个宏任务，接下来有异步代码的话才会先执行微任务。
+
+## 练习题
+
+```js
+setTimeout(function () {
+    console.log('setTimeout');
+}, 0);
+
+new Promise(function (resolve) {
+    console.log('promise');
+    resolve();
+}).then(function () {
+    console.log('then');
+});
+
+console.log('console');
+
+// "promise"、"console"、"then"、"setTimeout"
+```
+
+执行顺序解析如下：
+
+-   这段代码作为`宏任务`，进入`主线程`。
+-   先遇到 `setTimeout`，那么将其回调函数注册后分发到`宏任务`
+-   接下来遇到了 `Promise`，`new Promise 立即执行`，`then` 函数分发到`微任务`
+-   遇到 console.log()，立即执行。
+-   好啦，整体代码 `script` 作为第一个宏任务执行结束，看看有哪些微任务？我们发现了 then 在微任务里面，执行。
+-   ok，第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务开始。我们发现了宏任中 `setTimeout` 对应的回调函数，立即执行。
+-   结束。
+
+```js
+const promise = new Promise((resolve, reject) => {
+    console.log(1);
+
+    setTimeout(() => {
+        console.log('timeStart');
+
+        resolve('success');
+
+        console.log('timeEnd');
+    }, 0);
+
+    console.log(2);
+});
+
+promise.then((res) => {
+    console.log(res);
+});
+
+console.log(4);
+
+// 1、2、4、"timeStart"、"timeEnd"、"success"
+```
+
+```js
+setTimeout(() => {
+    console.log('timer1');
+
+    setTimeout(() => {
+        console.log('timer3');
+    }, 0);
+}, 0);
+
+setTimeout(() => {
+    console.log('timer2');
+}, 0);
+
+console.log('start');
+
+// "start"、"timer1"、"timer2"、"timer3"
+```
+
+```js
+setTimeout(() => {
+    console.log('timer1');
+
+    Promise.resolve().then(() => {
+        console.log('promise');
+    });
+}, 0);
+
+setTimeout(() => {
+    console.log('timer2');
+}, 0);
+
+console.log('start');
+
+// "start"、"timer1"、"promise"、"timer2"
+```
