@@ -222,6 +222,61 @@ Function.prototype.myBind = function (context) {
 };
 ```
 
+## 创建对象的方式
+
+### 字面量方式 {}
+
+```js
+var objA = {};
+objA.name = '张芳朝';
+objA.sayName = function () {
+    console.log(`我叫 ${this.name} `); // "我叫 张芳朝 "
+};
+objA.sayName();
+console.log(objA.__proto__ === Object.prototype); // true
+console.log(objA instanceof Object); // true
+```
+
+### new Object()
+
+实例化 Object() 构造函数。
+
+```js
+var objB = new Object();
+objB.name = '张芳朝';
+objB.sayName = function () {
+    console.log(`我叫${this.name}`); // "我叫 张芳朝 "
+};
+objB.sayName();
+console.log(objB.__proto__ === Object.prototype); // true
+console.log(objB instanceof Object); // true
+```
+
+### Object.create()
+
+`Object.create()` 方法创建一个新对象，使用`现有的对象`来提供新创建的对象的`__proto__`。
+
+```js
+const person = {
+    age: 16,
+    printFn: function () {
+        console.log(`我叫 ${this.name}； 今年 ${this.age} 岁`);
+    },
+};
+
+const me = Object.create(person);
+
+me.name = '张芳朝'; // "name" is a property set on "me", but not on "person"
+me.age = 18; // inherited properties can be overwritten
+
+me.printFn(); // "我叫 张芳朝； 今年 18 岁"
+```
+
+-   对于创建一个对象来说，更`推荐使用字面量`的方式创建对象（无论性能上还是可读性）。因为你使用 `new Object()` 的方式创建对象需要通过`作用域链`一层层找到 `Object` ，但是你使用字面量的方式就没这个问题。
+-   字面量和 `new` 关键字创建的对象是 `Object` 的实例，`原型`指向 `Object.prototype`，继承内置对象`Object`。
+
+-   `Object.create(arg, pro)` 创建的对象的`原型`取决于 `arg`，arg 为 `null`，新对象是`空对象`，`没有原型`，不继承任何对象；arg 为指定对象，新对象的原型指向指定对象，继承指定对象。
+
 ## 实现 new 关键字
 
 > 涉及面试题：new 的原理是什么？通过 new 的方式创建对象和通过字面量创建有什么区别？
@@ -247,7 +302,3 @@ function create() {
     return typeof result === 'object' ? result : obj;
 }
 ```
-
-对于实例对象来说，都是通过 `new` 产生的，无论是 `function Foo()` 还是 `let a = { b : 1 }` 。
-
-对于创建一个对象来说，更`推荐使用字面量`的方式创建对象（无论性能上还是可读性）。因为你使用 `new Object()` 的方式创建对象需要通过`作用域链`一层层找到 `Object` ，但是你使用字面量的方式就没这个问题。
