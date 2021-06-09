@@ -77,6 +77,13 @@ shouldComponentUpdate(newProps, nextState) {
 
 彻底拥抱`不可变值`，`基于共享数据(不是深拷贝)`，`性能好`。但是有一定的学习和迁移成本，请按需使用。
 
+-   `Immutable Data` 一旦创建，就`不能再被更改`。
+-   对 `Immutable` 对象的任何`修改`或`添加`、`删除`操作都会返回一个`新的 Immutable 对象`。
+-   `Immutable` 实现原理是：`持久化数据结构`，也就是`使用旧数据创建新数据时，要保证旧数据可用且不变`。
+-   为了避免 deepCopy 把所有节点都复制一遍带来的`性能损耗`，`Immutable` 使用了`结构共享`，即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其它节点则`进行共享`。
+
+![](/images/frame/immutable.png)
+
 ```js
 const map1 = Immutable.Map({ a: 1, b: 2, c: 3 });
 const map2 = map1.set('b', 50);
