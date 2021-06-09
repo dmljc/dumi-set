@@ -114,10 +114,11 @@ BFC 解决的问题
 }
 ```
 
-## CSS 预处理器
+## CSS 预/后处理器
 
-CSS 预处理器包括：Sass/Less/Postcss。CSS 预处理器的原理: 是将类 CSS 语言通过 Webpack 编译 转成浏览器可读的真正 CSS。
-在这层编译之上，便可以赋予 CSS 更多更强大的功能，常用功能:
+### CSS 预处理器
+
+包括：`Sass`、`Less`、`Stylus`。用来预编译 `Sass` 或 `Less`，增强了 css 代码的`复用性`。CSS 预处理器的原理: `是将类 CSS 语言通过 Webpack 编译 转成浏览器可读的真正 CSS`。在这层编译之上，便可以赋予 CSS 更多更强大的功能，常用功能:
 
 -   嵌套
 -   变量
@@ -125,6 +126,12 @@ CSS 预处理器包括：Sass/Less/Postcss。CSS 预处理器的原理: 是将�
 -   条件语句
 -   自动前缀
 -   mixin 复用
+
+### CSS 后处理器
+
+> PostCSS: 利用从 Can I Use 网站获取的数据为 CSS 规则添加特定厂商的前缀。`Autoprefixer` 自动获取浏览器的流行度和能够支持的属性，并根据这些数据帮你自动为 CSS 规则添加前缀。
+
+例如：`PostCSS`，在完成的样式表中根据 CSS 规范处理 CSS，让其更有效；目前最常做的是给 CSS 属性`添加浏览器私有前缀，实现跨浏览器兼容性的问题`。
 
 ## 伪类和伪元素
 
@@ -745,15 +752,3 @@ CSS：
 <!-- 参考文章：https://www.cnblogs.com/chengzp/p/layout.html -->
 
 <!-- https://juejin.im/post/5c64d15d6fb9a049d37f9c20#heading-11 -->
-
-## CSS 预处理器、后处理器
-
-### 预处理器
-
-例如：`Less`、`Sass`、`Stylus`，用来`预编译` Sass 或 Less，增强了 css 代码的`复用性`，还有`嵌套`、`mixin`、`变量`、`循环`、`函数`等，具有很方便的 UI 组件模块化开发能力，极大的提高工作效率。
-
-### 后处理器
-
-> PostCSS: 利用从 Can I Use 网站获取的数据为 CSS 规则添加特定厂商的前缀。 Autoprefixer 自动获取浏览器的流行度和能够支持的属性，并根据这些数据帮你自动为 CSS 规则添加前缀。
-
-例如：`PostCSS`，在完成的样式表中根据 CSS 规范处理 CSS，让其更有效；目前最常做的是给 CSS 属性`添加浏览器私有前缀，实现跨浏览器兼容性的问题`。
