@@ -186,7 +186,7 @@ var
 -   会变量提升
 -   未声明之前可以调用，值为 undefined
 -   能重复声明
--    声明的全局变量不会挂在顶层对象(global)下面
+-    声明的全局变量会挂在顶层对象(window)下面
 
 let / const
 
@@ -194,6 +194,7 @@ let / const
 -   有块级作用域概念
 -   会变量提升，但是，因为暂时性死区而报错 (在声明之前调用就处于暂时性死区)
 -   不能重复声明
+-   声明的全局变量不会挂在顶层对象(window)下面
 
 const
 
@@ -652,4 +653,89 @@ document.addEventListener(
 );
 ```
 
-<!-- ## 设计模式 -->
+## 设计模式
+
+### 单例模式
+
+> 单例模式的定义：`保证一个类仅有一个实例，并提供一个访问它的全局访问点`。实现的方法为先判断实例存在与否，如果存在则直接返回，如果不存在就创建了再返回，这就确保了一个类只有一个实例对象。
+
+适用场景：一个单一对象。比如：弹窗，无论点击多少次，弹窗只应该被创建一次。
+
+```js
+class CreateUser {
+    constructor(name) {
+        this.name = name;
+        this.getName();
+    }
+    getName() {
+        return this.name;
+    }
+}
+// 代理实现单例模式
+var ProxyMode = (function () {
+    var instance = null;
+    return function (name) {
+        if (!instance) {
+            instance = new CreateUser(name);
+        }
+        return instance;
+    };
+})();
+// 测试单体模式的实例
+var a = new ProxyMode('aaa');
+var b = new ProxyMode('bbb');
+// 因为单体模式是只实例化一次，所以下面的实例是相等的
+console.log(a === b); //true
+```
+
+### 代理模式
+
+> 是为一个对象提供一个代用品或占位符，以便控制对它的访问。
+
+1、HTML 事件代理
+
+如果一个节点中的子节点是动态生成的，那么子节点需要注册事件的话应该注册在父节点上。
+
+```js
+<ul id="ul">
+	<li>1</li>
+    <li>2</li>
+	<li>3</li>
+</ul>
+<script>
+	let ul = document.querySelector('#ul')
+	ul.addEventListener('click', (event) => {
+		console.log(event.target);
+	})
+</script>
+```
+
+事件代理的方式相较于直接给目标注册事件来说，有以下优点：
+
+-   节省内存
+-   不需要给子节点注销事件
+
+2、图片懒加载的方式：先通过一张 loading 图占位，然后通过异步的方式加载图片，等图片加载好了再把完成的图片加载到 img 标签里面。
+
+### 工厂模式
+
+> 工厂模式定义一个用于创建对象的接口，这个接口由子类决定实例化哪一个类。该模式使一个类的实例化延迟到了子类。而子类可以重写接口方法以便创建的时候指定自己的对象类型。
+
+![](/images/basic/gongchangmoshi.png)
+
+### 观察者模式
+
+> 观察者模式，它定义了一种一对多的关系，让多个观察者对象同时监听某一个主题对象，这个主题对象的状态发生变化时就会通知所有的观察者对象，使得它们能够自动更新自己。
+
+在观察者模式中有两个主要角色：Subject（主题）和 Observer（观察者）。
+
+![](/images/basic/guanchazhe.png)
+
+在上图中，Subject（主题）就是阿宝哥的 TS 专题文章，而观察者就是小秦和小王。由于观察者模式支持简单的广播通信，当消息更新时，会自动通知所有的观察者。
+
+### 发布订阅模式
+
+在软件架构中，发布/订阅是一种消息范式，消息的发送者（称为发布者）不会将消息直接发送给特定的接收者（称为订阅者）。而是将发布的消息分为不同的类别，然后分别发送给不同的订阅者。 同样的，订阅者可以表达对一个或多个类别的兴趣，只接收感兴趣的消息，无需了解哪些发布者存在。
+在发布订阅模式中有三个主要角色：Publisher（发布者）、 Channels（通道）和 Subscriber（订阅者）。
+
+![](/images/basic/fabudingyue.png)
