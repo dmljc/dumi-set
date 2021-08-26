@@ -31,12 +31,12 @@
         "react": "^17.0.2"
     },
     "devDependencies": {
-        "@umijs/test": "^3.4.22",
-        "dumi": "^1.1.18",
-        "father-build": "^1.19.5",
-        "gh-pages": "^3.2.0",
-        "lint-staged": "^11.0.0",
-        "prettier": "^2.3.0",
+        "@umijs/test": "^3.5.17",
+        "dumi": "^1.1.25",
+        "father-build": "^1.19.8",
+        "gh-pages": "^3.2.3",
+        "lint-staged": "^11.1.2",
+        "prettier": "^2.3.2",
         "yorkie": "^2.0.0"
     }
 }
