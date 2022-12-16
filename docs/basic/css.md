@@ -7,17 +7,32 @@ order: 12
 
 ## CSS 盒模型
 
-包括内容区域、内边距区域、边框区域和外边距区域。
+CSS 盒子组成由 4 个区域组成，从内到外依次为：内容区域、内边距区域、边框区域和外边距区域。
 
 ![](https://t1.picb.cc/uploads/2019/09/09/gXP6y7.jpg)
 
-W3C 盒子模型
+标准盒模型（content-box）
 
-box-sizing: content-box 元素的宽高大小表现为内容的大小。
+对于现代浏览器来说，元素默认应用标准盒模型。当然你也可以像下面这样做显式的设置。
 
-IE 盒子模型
+```css
+.box {
+  box-sizing: content-box;
+}
+```
 
-box-sizing: border-box 元素的宽高表现为`内容` + `内边距` + `边框`的大小。背景会延伸到边框的外沿。(IE5.x 和 IE6 在怪异模式中使用非标准的盒子模型)。
+怪异盒模型（border-box）
+
+IE 浏览器的早期版本没有遵循 CSS 标准，width 和 height 包含content padding border，而不是 content 的宽高，导致不同浏览器的表现不同，毫无疑问是个浏览器 bug。
+
+后来 CSS3 引入了 box-sizing，让开发者可以选择使用哪种盒模型，提供更好的灵活性。通过下面的设置，我们可以将元素的盒模型设置为怪异盒模型。
+
+```css
+.box {
+  box-sizing: border-box;
+}
+
+```
 
 ## 什么是 BFC
 
