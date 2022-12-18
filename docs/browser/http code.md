@@ -3,7 +3,14 @@ toc: content
 order: 6
 ---
 
-# HTTP 状态码
+# Http 状态码
+
+## Http 和 Https 的区别
+
+-   Http 协议是超文本传输协议，信息是明文传输；Https 则是具有安全性的 SSL 加密传输协议；
+-   Https 协议需要 CA 证书，费用较高；而 Http 协议不需要；
+-   端口不同：Http 协议是 80 端口；Https 协议是 443 端口；
+-   连接方式不同：Http 协议连接很简单，是无状态连接；Https 协议是具有 SSL 和 Http 协议构建的可进行加密传输、身份认证的网络协议，比 Http 更加安全；
 
 ## 2XX (成功)
 
