@@ -102,7 +102,7 @@ Vue.prototype._init = function (options?: Object) {
     if (options && options._isComponent) {
         initInternalComponent(vm, options)
     } else {
-        // 合并配置
+        // 合并配置：Vue默认配置（components， directives，filters...）与用户自定义的options（data，methons，lifecycle）进行合并
         vm.$options = mergeOptions(
             resolveConstructorOptions(vm.constructor),
             options || {},
