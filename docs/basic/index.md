@@ -117,6 +117,25 @@ NaN * 32; // NaN
 NaN / 32; // NaN
 ```
 
+### constructor
+
+Object 的每个实例都有构造函数 constructor，用来保存创建当前对象的函数。
+
+```js
+let arr = [];
+console.log(arr.constructor === Array); // true
+```
+
+需要注意的是，constructor 有被修改的风险，判断结果不一定准确，比如：
+
+```js
+let arr = [1, 2, 3];
+arr.constructor = function () { }
+console.log(arr.constructor === Array); // false
+```
+
+一般不推荐使用 constructor 来判断是否为数组，我们只需要知道有这么一个方法就行。
+
 ### instanceof
 
 `instanceof` 可以正确的判断引用类型的类型，因为内部机制是 **通过判断对象的原型链中能否找到 构造函数的 prototype 属性**。
@@ -154,9 +173,52 @@ function instanceof(left, right) {
 }
 ```
 
+instanceof 的弊端：
+
+- 构造函数的 prototype 和 实例的原型链都有可能会改变，所以判断出的结果不一定一成不变。
+- 在有 iframe 的页面脚本中使用 instanceof，可能会得到错误的结果，因为 iframe 拥有独立的全局环境，不同的全局环境拥有不同的全局对象，从而拥有不同的内置类型构造函数。
+
+### Array.isArray
+
+Array.isArray() 是ES5新增的方法，用于确定传递的值是否是一个数组，如果是数组，则返回 true，否则返回 false。
+
+``` js
+let arr = [];
+console.log(Array.isArray(arr)); // true
+```
+
+需要注意的一点是：其实 Array.prototype 也是一个数组。
+
+```js
+Array.isArray(Array.prototype); // true
+```
+
 ### Object.prototype.toString.call(xx)
 
 使用 `Object.prototype.toString.call(xx)` 可以获得变量的正确类型。
+
+痛过调用原型链顶端的 toString 方法实现；这里用 call 是为了改变 toString 函数内部的 this 指向，其实也可以用 apply。如果不把 this 指向为我们的目标变量，this 将永远指向调用 toString 的 prototype。
+
+为什么一定要调用原型链顶端的 toString 方法呢？????
+因为，对象和数组本身是可以改写 toString 的，所以才调用原型链顶端的 toString 方法，代码如下；
+
+```js
+// 改写 toString 前
+
+var obj = {};
+
+console.log(obj.toString() === '[object Object]') // true
+
+// 改写后
+
+var obj = { 
+    toString: function() {
+        return 'xxx'; // 改写 toString
+    }
+};
+
+console.log(obj.toString() === '[object Object]') // false
+```
 
 ```js
 Object.prototype.toString.call(12); // "[object Number]"
