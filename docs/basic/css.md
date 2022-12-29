@@ -38,20 +38,45 @@ IE 浏览器的早期版本没有遵循 CSS 标准，width 和 height 包含cont
 
 BFC 全称为`块级格式化上下文` (Block Formatting Context) 。**它决定了元素如何对其内容进行定位以及与其他元素的关系和相互作用**，当涉及到可视化布局的时候，BFC 提供了一个环境，HTML 元素在这个环境中按照一定规则进行布局。
 
-触发 BFC 的条件
+### 从一个现象说起
 
--   浮动元素 (元素的 float:left,right)
--   绝对定位元素 (元素具有 position 为 absolute 或 fixed)
--   内联块 (元素具有 display: inline-block)
--   表格单元格 (元素具有 display: table-cell，HTML 表格单元格默认属性)
--   具有 overflow 且值不是 visible 的块元素(overflow: auto,hidden,scroll)
--   弹性盒（flex 或 inline-flex）
+- 一个盒子不设置 height，当内容子元素都浮动时，无法撑起自身（height = 0）
+- 这个盒子没有形成 BFC （代码如下：）
+
+```js
+// css
+.son {
+    width: 300px;
+    height: 300px;
+    background: blue;
+    float: left;
+}
+
+<div class="father">
+    <div class="son"></div>
+    <div class="son"></div>
+    <div class="son"></div>
+</div>
+
+
+// 解决方案之一
+.father {
+    float: left;
+}
+```
+
+触发 BFC 的条件：
+
+-   float 的值不为 none；
+-   position 的值不为 static 或 relative；
+-   display 的值是 inline-block、flex、或者 inline-flex；
+-   overflow 的值为 hidden；
 
 BFC 解决的问题
 
--   清除浮动：父元素设置 overflow: hidden 触发 BFC 实现清除浮动，防止父元素高度塌陷。
--   消除相邻元素垂直方向的边距重叠：第二个子元素套一层，并设置 overflow: hidden，构建 BFC 使其不影响外部元素。
--   消除父子元素边距重叠，父元素设置 overflow: hidden
+-   清除浮动：父元素设置 overflow: hidden 触发 BFC 实现清除浮动，`防止父元素高度塌陷`；
+<!-- -   `消除相邻元素垂直方向的边距重叠`：第二个子元素套一层，并设置 overflow: hidden，构建 BFC 使其不影响外部元素； -->
+-   `消除父子元素边距重叠`，父元素设置 overflow: hidden；
 
 <!-- ## 层叠上下文
 
