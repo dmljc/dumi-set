@@ -47,6 +47,29 @@ let sym = Symbol('My symbol');
     `your symbol is ${sym}`; // TypeError: can't convert symbol to string
 ```
 
+### Symbol.for()
+
+有时，我们希望重新使用同一个 Symbol 值，Symbol.for()方法可以做到这一点。它接受一个字符串作为参数，然后搜索有没有以该参数作为名称的 Symbol 值。如果有，就返回这个 Symbol 值，否则就新建一个以该字符串为名称的 Symbol 值，并将其注册到全局。
+
+```js
+let s1 = Symbol.for('foo');
+let s2 = Symbol.for('foo');
+
+s1 === s2 // true
+```
+
+### Symbol.keyFor()
+
+Symbol.keyFor() 方法返回一个已登记的 Symbol 类型值的key。
+
+```js
+let s1 = Symbol.for("foo");
+Symbol.keyFor(s1) // "foo"
+
+let s2 = Symbol("foo");
+Symbol.keyFor(s2) // undefined
+```
+
 ## BigInt
 
 JavaScript 所有`数字都保存成 64 位浮点数`，这给`数值`的表示带来了两大限制：
