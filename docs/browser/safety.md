@@ -47,6 +47,9 @@ server.on('request', handleReequest);
 
 -   `HttpOnly 防止劫取 Cookie`：浏览器将禁止页面的 `Javascript` 访问带有 `HttpOnly` 属性的`Cookie`。上文有说到，攻击者可以通过注入恶意脚本获取用户的 Cookie 信息。通常 Cookie 中都包含了用户的登录凭证信息，攻击者在获取到 Cookie 之后，则可以发起 Cookie 劫持攻击。所以，严格来说，HttpOnly 并非阻止 XSS 攻击，而是能阻止 XSS 攻击后的 Cookie 劫持攻击。
 
+> HttpOnly属性是Set-Cookie HTTP 响应标头的可选属性，由 Web 服务器在 HTTP 响应中与网页一起发送到 Web 浏览器。下面是使用Set-Cookie标头设置会话 cookie 的示例：Set-Cookie: sessionid=QmFieWxvbiA1; HttpOnly
+
+
 -   `输入检查`：不要相信用户的任何输入。对于用户的任何输入要进行`检查`、`过滤`和`转义`。建立可信任的字符和 HTML 标签`白名单`，对于不在白名单之列的字符或者标签进行过滤或编码。在 XSS 防御中，输入检查一般是检查用户输入的数据中是否包含 <，> 等特殊字符，如果存在，则对特殊字符进行过滤或编码，这种方式也称为 XSS Filter。而在一些前端框架中，都会有一份 decodingMap， 用于对用户输入所包含的特殊字符或标签进行编码或过滤，如 <，>，script，防止 XSS 攻击：
 
 ```js
