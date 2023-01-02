@@ -130,7 +130,7 @@ console.log(arr.constructor === Array); // true
 
 ```js
 let arr = [1, 2, 3];
-arr.constructor = function () { }
+arr.constructor = function () {};
 console.log(arr.constructor === Array); // false
 ```
 
@@ -175,14 +175,14 @@ function instanceof(left, right) {
 
 instanceof 的弊端：
 
-- 构造函数的 prototype 和 实例的原型链都有可能会改变，所以判断出的结果不一定一成不变。
-- 在有 iframe 的页面脚本中使用 instanceof，可能会得到错误的结果，因为 iframe 拥有独立的全局环境，不同的全局环境拥有不同的全局对象，从而拥有不同的内置类型构造函数。
+-   构造函数的 prototype 和 实例的原型链都有可能会改变，所以判断出的结果不一定一成不变。
+-   在有 iframe 的页面脚本中使用 instanceof，可能会得到错误的结果，因为 iframe 拥有独立的全局环境，不同的全局环境拥有不同的全局对象，从而拥有不同的内置类型构造函数。
 
 ### Array.isArray
 
-Array.isArray() 是ES5新增的方法，用于确定传递的值是否是一个数组，如果是数组，则返回 true，否则返回 false。
+Array.isArray() 是 ES5 新增的方法，用于确定传递的值是否是一个数组，如果是数组，则返回 true，否则返回 false。
 
-``` js
+```js
 let arr = [];
 console.log(Array.isArray(arr)); // true
 ```
@@ -207,17 +207,17 @@ Array.isArray(Array.prototype); // true
 
 var obj = {};
 
-console.log(obj.toString() === '[object Object]') // true
+console.log(obj.toString() === '[object Object]'); // true
 
 // 改写后
 
-var obj = { 
-    toString: function() {
+var obj = {
+    toString: function () {
         return 'xxx'; // 改写 toString
-    }
+    },
 };
 
-console.log(obj.toString() === '[object Object]') // false
+console.log(obj.toString() === '[object Object]'); // false
 ```
 
 ```js
@@ -713,6 +713,32 @@ document.addEventListener(
     'scroll',
     throttle(() => console.log('触发了滚动事件'), 1000),
 );
+```
+
+## 控制台打印当前时间，间隔一秒，格式 YYYY-MM-DD hh:mm:ss
+
+```js
+const toStr = (num = '--') => {
+    return num.toString().padStart(2, '0');
+};
+
+const onTimer = () => {
+    const date = new Date();
+
+    const year = date.getFullYear();
+    const month = toStr(date.getMonth() + 1);
+    const day = toStr(date.getDate());
+
+    const hour = toStr(date.getHours());
+    const min = toStr(date.getMinutes());
+    const second = toStr(date.getSeconds());
+
+    return `${year}-${month}-${day} ${hour}:${min}:${second}`;
+};
+
+setInterval(() => {
+    console.log('当前时间是:', onTimer());
+}, 1000);
 ```
 
 ## 设计模式
