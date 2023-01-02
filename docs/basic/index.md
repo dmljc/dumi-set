@@ -741,6 +741,46 @@ setInterval(() => {
 }, 1000);
 ```
 
+## 找出字符串中出现最多的字母，以及出现的次数
+
+```js
+const str = 'abbcccc';
+
+const getFun = (str) => {
+    const arr = str.split('');
+
+    return arr.reduce((pre, cur) => {
+        // console.log('pre--cur', pre, cur)
+        // cur：当前项，是个字符串：a，或者b，c
+        // pre：上次计算出来的结果，是一个对象 类似：{a: 3, b: 6, c: 9}
+        if (cur in pre) {
+            pre[cur] += 1;
+        } else {
+            pre[cur] = 1;
+        }
+        return pre;
+    }, {});
+};
+
+const maxObj = getFun(str);
+
+let maxStr = null; // 出现次数最多的字符串
+let max = 0; // 出现次数最多的字符串，出现的次数
+
+for (let key in maxObj) {
+    // 冒泡排序
+    // 假设 max 小于 maxObj[key]
+    // 说明假设错误，max是最大的，则给max重新赋值
+    if (max < maxObj[key]) {
+        max = maxObj[key];
+        maxStr = key;
+    }
+}
+
+console.log(`出现次数最多的是：${maxStr}，出现的次数是：${max}`);
+// 出现次数最多的是：c，出现的次数是：4
+```
+
 ## 设计模式
 
 ### 单例模式
