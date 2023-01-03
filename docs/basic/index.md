@@ -459,6 +459,26 @@ let test = (arr) => Array.from(new Set(arr));
 test(arr); // [1, "a", "b", "d", "e", 0]
 ```
 
+### reduce 实现数组去重
+
+```js
+const uniq = (arr) => {
+    let result = [];
+    result = arr.reduce((pre, cur) => {
+        if (!pre.includes(cur)) {
+            console.log('pre--cur', pre, cur);
+            return pre.concat(cur);
+        } else {
+            return pre;
+        }
+    }, []);
+
+    return result;
+};
+
+console.log('-----', uniq([1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 6])); // [1, 2, 3, 4, 5, 6]
+```
+
 ## 数组排序
 
 数组排序比较常用的：`冒泡排序`、`快速排序`
@@ -790,6 +810,90 @@ const random = (min, max) => {
     return min + Math.round(random * range);
 };
 console.log('---', random(1, 10));
+```
+
+### 二维数组扁平化
+
+```js
+let arr = [
+    [1, 2],
+    [3, 4],
+    [5, 6],
+];
+
+const flat = (arr) => {
+    return arr.reduce((pre, cur) => {
+        return pre.concat(cur);
+    }, []);
+};
+
+console.log(flat(arr));
+```
+
+### 多维数组扁平化
+
+```js
+let arr = [
+    [1, 2],
+    [3, 4],
+    [5, 6, [7, 8, 9]],
+];
+
+const flat = (arr) => {
+    return arr.reduce((pre, cur) => {
+        if (Array.isArray(cur)) {
+            return pre.concat(flat(cur));
+        } else {
+            return pre.concat(cur);
+        }
+    }, []);
+};
+
+console.log('flat(arr)---', flat(arr)); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+### 求和：参数不固定
+
+```js
+function sum() {
+    let total = 0;
+    let len = arguments.length;
+
+    for (let i = 0; i < len; i++) {
+        total += arguments[i];
+    }
+
+    return total;
+}
+
+console.log('求和：参数不固定：', sum(1, 2, 3, 4)); // 10
+```
+
+### 对象格式数据求和
+
+```js
+let arr = [
+    {
+        subject: 'chinese',
+        score: 100,
+    },
+    {
+        subject: 'math',
+        score: 50,
+    },
+    {
+        subject: 'english',
+        score: 30,
+    },
+];
+
+const sum = (arr) => {
+    return arr.reduce((pre, cur) => {
+        return pre + cur.score;
+    }, 0);
+};
+
+console.log('求和=', sum(arr)); // 180
 ```
 
 ## 设计模式
