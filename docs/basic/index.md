@@ -781,6 +781,17 @@ console.log(`出现次数最多的是：${maxStr}，出现的次数是：${max}`
 // 出现次数最多的是：c，出现的次数是：4
 ```
 
+## 获取指定范围的随机数
+
+```js
+const random = (min, max) => {
+    const range = max - min;
+    const random = Math.random();
+    return min + Math.round(random * range);
+};
+console.log('---', random(1, 10));
+```
+
 ## 设计模式
 
 ### 单例模式
