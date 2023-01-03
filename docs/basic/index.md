@@ -796,11 +796,14 @@ console.log('---', random(1, 10));
 
 ### 单例模式
 
-> 单例模式的定义：`保证一个类仅有一个实例，并提供一个访问它的全局访问点`。实现的方法为先判断实例存在与否，如果存在则直接返回，如果不存在就创建了再返回，这就确保了一个类只有一个实例对象。
+单例模式：`保证一个类仅有一个实例，并提供一个访问它的全局访问点`。
+
+实现的方法为：先判断实例存在与否，如果存在则直接返回，如果不存在就创建了再返回，这就确保了一个类只有一个实例对象。
 
 适用场景：一个单一对象。比如：弹窗，无论点击多少次，弹窗只应该被创建一次。
 
 ```js
+// 1、class 实现单例模式
 class CreateUser {
     constructor(name) {
         this.name = name;
@@ -825,6 +828,28 @@ var a = new ProxyMode('aaa');
 var b = new ProxyMode('bbb');
 // 因为单体模式是只实例化一次，所以下面的实例是相等的
 console.log(a === b); //true
+
+// 2、闭包实现单例模式
+<button id="login">登录</button>;
+
+var createLoginLayer = (function () {
+    var div = null;
+
+    return function () {
+        if (!div) {
+            div = document.createElement('div');
+            div.innerHTML = '我是登录弹框';
+            div.style.display = 'none';
+            document.body.append(div);
+        }
+        return div;
+    };
+})();
+
+document.getElementById('login').onclick = function () {
+    var loginLayer = createLoginLayer();
+    loginLayer.style.display = 'block';
+};
 ```
 
 ### 代理模式
