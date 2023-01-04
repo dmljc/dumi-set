@@ -176,7 +176,7 @@ this.setState((prevState, props) => {
 
 可能原因是：UNSAFE 这里并不是示意不平安的意思，它只是不倡议持续应用，并示意应用这些生命周期的代码可能在将来的 React 版本（目前 React17 还没有齐全破除）`存在缺点`，如 React `Fiber 异步渲染`的呈现。
 
-### getDerivedStateFromProps
+<!-- ### getDerivedStateFromProps
 
 ```js
 static getDerivedStateFromProps(props, state)
@@ -188,10 +188,10 @@ static getDerivedStateFromProps(props, state)
 
 ```js
 getSnapshotBeforeUpdate(prevProps, prevState);
-```
+``` 
 
 在`最近一次渲染输出（提交到 DOM 节点）之前调用`。它使得组件能在发生更改之前从 DOM 中捕获一些信息（例如，滚动位置）。此生命周期方法的任何返回值将作为参数传递给 componentDidUpdate()。
-
+-->
 [点击在线查看 组件生命周期](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
 
 [vue 组件生命周期](https://cn.vuejs.org/images/lifecycle.png)
