@@ -5,7 +5,7 @@ order: 6
 
 # React 高级特性
 
-## portals
+## portals 同 vue3 Teleport
 
 通常组件会默认按照既定层次嵌套渲染。 那么，如何将组件渲染到父组件以外呢?
 
@@ -19,9 +19,9 @@ ReactDOM.createPortal(child, container);
 
 一个 `portal` 的典型用例是当`父组件`有 `overflow: hidden` 或 `z-index` 样式时，但你需要子组件能够在视觉上“跳出”其容器。例如，对话框、悬浮卡以及提示框：
 
-## 异步加载组件
+## Suspense vue3 也有 Suspense
 
-React 16.6 新增了 `<Suspense>`组件，让你可以“等待”目标代码加载，并且可以直接指定一个加载的界面（像是个 loading），让它在用户等待的时候显示：
+React 16.6 新增了 `<Suspense>` 异步加载组件，让你可以“等待”目标代码加载，并且可以直接指定一个加载的界面（像是个 loading），让它在用户等待的时候显示：
 
 ```js
 const ProfilePage = React.lazy(() => import('./ProfilePage')); // 懒加载
@@ -30,6 +30,25 @@ const ProfilePage = React.lazy(() => import('./ProfilePage')); // 懒加载
 <Suspense fallback={<loading />}>
     <ProfilePage />
 </Suspense>;
+```
+
+## React.Fragment vue3 也有 Fragment
+
+React 中的一个常见模式是一个组件返回多个元素。Fragments 允许你将子列表分组，而无需向 DOM 添加额外节点。
+
+你可以使用`短语法`来声明 Fragments。它看起来像空标签：
+
+```js
+class Columns extends React.Component {
+    render() {
+        return (
+            <>
+                <td>Hello</td>
+                <td>World</td>
+            </>
+        );
+    }
+}
 ```
 
 ## 性能优化 SCU
@@ -73,7 +92,7 @@ shouldComponentUpdate(newProps, nextState) {
 
 </Alert>
 
-## immutable.js
+<!-- ## immutable.js
 
 彻底拥抱`不可变值`，`基于共享数据(不是深拷贝)`，`性能好`。但是有一定的学习和迁移成本，请按需使用。
 
@@ -89,7 +108,7 @@ const map1 = Immutable.Map({ a: 1, b: 2, c: 3 });
 const map2 = map1.set('b', 50);
 map1.get('b'); // 2
 map2.get('b'); // 50
-```
+``` -->
 
 ## 性能优化 memo
 
@@ -99,11 +118,16 @@ const MyComponent = React.memo(function MyComponent(props) {
 });
 ```
 
-`React.memo` 为高阶组件。
+首先 `React.memo` 是一个高阶组件，高阶组件是参数为组件，返回值为新组件的函数。
 
-如果你的组件在相同 `props` 的情况下`渲染相同的结果`，那么你可以通过将其包装在 `React.memo` 中调用，以此`通过记忆组件渲染结果的方式`来提高组件的性能表现。这意味着在这种情况下，React 将**跳过渲染组件的操作并直接复用最近一次渲染的结果。**
+被 React.memo 包裹的组件在渲染前，会对新旧 props 进行浅比较：
 
-`React.memo` 仅检查 `props` 变更。如果`函数组件`被 `React.memo` 包裹，且其实现中拥有 `useState`，`useReducer` 或 `useContext` 的 `Hook`，当 `context` 发生变化时，它仍会`重新渲染`。
+-   如果新旧 props 浅比较相等，则不进行重新渲染（使用缓存的组件）。
+-   如果新旧 props 浅比较不相等，则进行重新渲染（重新渲染的组件）。
+
+<!-- 如果你的组件在相同 `props` 的情况下`渲染相同的结果`，那么你可以通过将其包装在 `React.memo` 中调用，以此`通过记忆组件渲染结果的方式`来提高组件的性能表现。这意味着在这种情况下，React 将**跳过渲染组件的操作并直接复用最近一次渲染的结果。** -->
+
+<!-- `React.memo` 仅检查 `props` 变更。如果`函数组件`被 `React.memo` 包裹，且其实现中拥有 `useState`，`useReducer` 或 `useContext` 的 `Hook`，当 `context` 发生变化时，它仍会`重新渲染`。 -->
 
 默认情况下其只会对`复杂对象`做`浅层对比`，如果你想要控制对比过程，那么请将`自定义`的比较函数通过`第二个参数`传入来实现。
 
@@ -124,33 +148,14 @@ export default React.memo(MyComponent, areEqual);
 <Alert type="warning">
 注意
 
-此方法仅作为`性能优化`的方式而存在。但请不要依赖它来“阻止”渲染，因为这会产生 bug。
+<!-- 此方法仅作为`性能优化`的方式而存在。但请不要依赖它来“阻止”渲染，因为这会产生 bug。 -->
 
 与 class 组件中 `shouldComponentUpdate()` 方法不同的是，如果 `props` 相等，`areEqual` 会返回 `true`；如果 props 不相等，则返回 false。这与 `shouldComponentUpdate` 方法的返回值相反。
 
 </Alert>
 
-## JSX
 
-`JSX` 的本质是 `createElement()`
-
-```js
-React.createElement(
-    type, // 标签类型
-    [props], // 标签属性
-    [...children], // 标签子元素
-);
-```
-
-创建并返回指定类型的新 `React 元素`。其中的类型参数既可以是标签名字符串（如 `'div'` 或 `'span'`），也可以是 `React 组件` 类型 （class 组件或函数组件），或是 `React fragment` 类型。
-
-使用 `JSX `编写的代码将会`被转换成`使用 `React.createElement()` 的形式。
-
-[在线的 Babel 编译器](https://www.babeljs.cn/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAdQKYBsJwLaoBQAOATnAQM4CUiA3gFCKJGpQhFIA8AFgIwB8AEhnRwANDWKkyAOjABDXAF92Aeh68A3LQW1a7ACYwAbohh6AvACIARnAAeF3vUTs0mHKkRzclgF7AIFogIAMLoMBAA1mbUCPyyYHroqArKjioGho5AA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=true&targets=&version=7.13.17&externalPlugins=)
-
-## React.Fragment
-
-## 高阶组件
+<!-- ## 高阶组件
 
 `高阶组件`（HOC）是 React 中用于复用组件逻辑的一种高级技巧。`HOC` 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的`设计模式`。
 
@@ -196,10 +201,51 @@ Hooks 带来的最大好处：`逻辑复用`
 
 在之前的 `Class 组件中`，难以实现逻辑的复用，必须借助于`高阶组件`。但是`高阶组件会产生冗余的组件节点，让调试变得困难。`
 
-</Alert>
+</Alert> -->
 
-## 合成事件
+<!-- ## 合成事件
 
 它是浏览器的原生事件的`跨浏览器包装器`。除兼容所有浏览器外，它还拥有和浏览器原生事件相同的接口，包括 `stopPropagation()` 和 `preventDefault()`。
 
-当你需要使用浏览器的`底层事件`时，只需要使用 `nativeEvent` 属性来获取即可。合成事件与浏览器的原生事件不同，也不会直接映射到原生事件。
+当你需要使用浏览器的`底层事件`时，只需要使用 `nativeEvent` 属性来获取即可。合成事件与浏览器的原生事件不同，也不会直接映射到原生事件。 -->
+
+## useMemo 缓存数据（vue computed）
+
+`const memolized = useMemo(fn,deps);`
+
+把“创建”函数和依赖项数组作为参数传入 useMemo，它仅会在某个依赖项改变时才重新计算 memoized 值。这种优化有助于避免在每次渲染时都进行高开销的计算。
+
+记住，传入 useMemo 的函数会在渲染期间执行。请不要在这个函数内部执行不应该在渲染期间内执行的操作，诸如副作用这类的操作属于 useEffect 的适用范畴，而不是 useMemo。
+
+如果没有提供依赖项数组，useMemo 在每次渲染时都会计算新的值。
+
+## useCallback 缓存函数
+
+`const memolizedCallback = useCallback(fn, deps);`
+
+把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新。当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。
+
+useCallback(fn, deps) 相当于 useMemo(() => fn, deps)。
+
+## React.lazy React.Suspense 基于路由的代码分割
+
+`减少首屏加载文件的大小，提高首屏的渲染速度。`
+
+```js
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+const Home = lazy(() => import('./routes/Home'));
+const About = lazy(() => import('./routes/About'));
+
+const App = () => (
+    <Router>
+        <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+            </Routes>
+        </Suspense>
+    </Router>
+);
+```

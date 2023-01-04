@@ -102,7 +102,7 @@ document.body.addEventListener('click', () => {
 });
 ```
 
-### 更新前可能会被合并
+## 更新前可能会被合并
 
 **state 异步更新的话，若传入对象 更新前会被合并；传入函数，则不会被合并**
 
@@ -135,6 +135,26 @@ this.setState((prevState, props) => {
     };
 });
 ``` -->
+
+
+## JSX
+
+`JSX` 的本质是 `createElement()`
+
+```js
+React.createElement(
+    type, // 标签类型
+    [props], // 标签属性
+    [...children], // 标签子元素
+);
+```
+
+创建并返回指定类型的新 `React 元素`。其中的类型参数既可以是标签名字符串（如 `'div'` 或 `'span'`），也可以是 `React 组件` 类型 （class 组件或函数组件），或是 `React fragment` 类型。
+
+使用 `JSX `编写的代码将会`被转换成`使用 `React.createElement()` 的形式。
+
+[在线的 Babel 编译器](https://www.babeljs.cn/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&spec=false&loose=false&code_lz=GYVwdgxgLglg9mABAdQKYBsJwLaoBQAOATnAQM4CUiA3gFCKJGpQhFIA8AFgIwB8AEhnRwANDWKkyAOjABDXAF92Aeh68A3LQW1a7ACYwAbohh6AvACIARnAAeF3vUTs0mHKkRzclgF7AIFogIAMLoMBAA1mbUCPyyYHroqArKjioGho5AA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=true&targets=&version=7.13.17&externalPlugins=)
+
 
 ## 生命周期
 
