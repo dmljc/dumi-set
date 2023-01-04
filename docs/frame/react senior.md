@@ -249,3 +249,29 @@ const App = () => (
     </Router>
 );
 ```
+
+## umi 按需加载
+
+常见使用场景：组件体积太大，不适合直接计入 bundle 中，以免影响`首屏加载速度`。例如：某组件 HugeA 包含巨大的实现 / 依赖了巨大的三方库，且该组件 HugeA 的使用不在首屏显示范围内，可被单独拆出。这时候，dynamic 就该上场了。
+
+为了简化部署成本，`按需加载`功能默认是关闭的，你需要在使用之前先通过配置开启：
+
+```js
+export default {
+  dynamicImport: {},
+}
+```
+
+## umi 快速刷新（Fast Refresh）
+
+快速刷新（Fast Refresh）是 React 官方为 React Native 开发的`模块热替换（HMR）方案`，由于其核心实现与平台无关，同时也适用于 Web。
+
+Fast Refresh 功能最大的特性是：`开发环境下，可以保持组件状态，同时编辑提供即时反馈`。
+
+在配置文件加上 `fastRefresh: {}` 即可开启;
+
+## umi mfsu（Module Federation Speed Up）
+
+`mfsu` 是一种基于 webpack5 新特性 Module Federation (微前端) 的打包提速方案。核心原理是：`将应用的依赖构建为一个 Module Federation 的 remote 应用，以免去应用热更新时对依赖的编译`。
+
+因此，`开启 mfsu 可以大幅减少热更新所需的时间`。在生产模式，也可以通过提前编译依赖，大幅提升部署效率。
