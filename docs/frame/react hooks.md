@@ -1,6 +1,7 @@
 ---
 toc: content
 order: 7
+hide: true 
 ---
 
 # React Hooks
