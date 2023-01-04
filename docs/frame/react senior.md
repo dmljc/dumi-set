@@ -154,7 +154,6 @@ export default React.memo(MyComponent, areEqual);
 
 </Alert>
 
-
 <!-- ## 高阶组件
 
 `高阶组件`（HOC）是 React 中用于复用组件逻辑的一种高级技巧。`HOC` 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的`设计模式`。
@@ -258,8 +257,40 @@ const App = () => (
 
 ```js
 export default {
-  dynamicImport: {},
-}
+    dynamicImport: {},
+};
+```
+
+## splitChunks 分包减少整体尺寸
+
+如果开了 `dynamicImport`，然后产物特别大，每个出口文件都包含了相同的依赖，比如 `antd`，可尝试通过 `splitChunks` 配置调整 `公共依赖的提取` 策略。
+
+```js
+export default {
+    dynamicImport: {},
+    chunks: ['vendors', 'umi'],
+    chainWebpack: function (config, { webpack }) {
+        config.merge({
+            optimization: {
+                splitChunks: {
+                    chunks: 'all',
+                    minSize: 30000,
+                    minChunks: 3,
+                    automaticNameDelimiter: '.',
+                    cacheGroups: {
+                        vendor: {
+                            name: 'vendors',
+                            test({ resource }) {
+                                return /[\\/]node_modules[\\/]/.test(resource);
+                            },
+                            priority: 10,
+                        },
+                    },
+                },
+            },
+        });
+    },
+};
 ```
 
 ## umi 快速刷新（Fast Refresh）
