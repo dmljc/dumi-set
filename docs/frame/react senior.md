@@ -306,3 +306,45 @@ Fast Refresh 功能最大的特性是：`开发环境下，可以保持组件状
 `mfsu` 是一种基于 webpack5 新特性 Module Federation (微前端) 的打包提速方案。核心原理是：`将应用的依赖构建为一个 Module Federation 的 remote 应用，以免去应用热更新时对依赖的编译`。
 
 因此，`开启 mfsu 可以大幅减少热更新所需的时间`。在生产模式，也可以通过提前编译依赖，大幅提升部署效率。
+
+## 编译提速
+
+Umi 默认编译 node_modules 下的文件，带来一些收益的同时，也增加了额外的编译时间。如果不希望 node_modules 下的文件走 babel 编译，可通过以下配置减少 40% 到 60% 的编译时间。
+
+```js
+export default {
+    nodeModulesTransform: {
+        type: 'none',
+        exclude: [],
+    },
+};
+```
+
+## externals
+
+对于一些大尺寸依赖，比如图表库、antd 等，可尝试通过 `externals` 的配置引入相关 umd 文件，减少编译消耗。
+
+比如 react 和 react-dom：
+
+```js
+export default {
+    // 配置 external
+    externals: {
+        react: 'window.React',
+        'react-dom': 'window.ReactDOM',
+    },
+
+    // 引入被 external 库的 scripts
+    // 区分 development 和 production，使用不同的产物
+    scripts:
+        process.env.NODE_ENV === 'development'
+            ? [
+                  'https://gw.alipayobjects.com/os/lib/react/16.13.1/umd/react.development.js',
+                  'https://gw.alipayobjects.com/os/lib/react-dom/16.13.1/umd/react-dom.development.js',
+              ]
+            : [
+                  'https://gw.alipayobjects.com/os/lib/react/16.13.1/umd/react.production.min.js',
+                  'https://gw.alipayobjects.com/os/lib/react-dom/16.13.1/umd/react-dom.production.min.js',
+              ],
+};
+```
