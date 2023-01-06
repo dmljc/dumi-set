@@ -1,6 +1,6 @@
 ---
 toc: content
-order: 6
+order: 3
 ---
 
 # Http 状态码
@@ -58,7 +58,7 @@ order: 6
 
 ![](/images/browser/http/304.png)
 
-`未修改，会使用缓存`。
+`未修改，会使用缓存`。协商缓存，因为需要与服务器通信。
 
 ### 307 Temporary Redirect
 
