@@ -1,11 +1,14 @@
 ---
 toc: content
 order: 14
+hide: true
 ---
 
 # H5 新增标签及属性
 
 ## 语义化标签
+
+![proxy](/images/basic/h5NewTag.png)
 
 ```html
 <header>头部</header>
@@ -44,6 +47,7 @@ order: 14
 
 -   `localStorage`
 -   `sessionStorage`
+-   `IndexedDB`
 <!-- - `Web Worker` -->
 
 ## 地理定位
