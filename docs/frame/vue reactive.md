@@ -243,7 +243,7 @@ const observed = new Proxy(target, {
 
 -   不兼容 ie 浏览器，看下图 proxy 的兼容性问题
 
-![proxy](/images/proxy.png)
+![proxy](/images/frame/proxy.png)
 
 ### Object.defineProperty 的优势如下:
 
