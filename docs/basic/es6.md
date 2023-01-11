@@ -193,3 +193,21 @@ WeakMap 结构与 Map 结构类似，也是用于生成键值对的集合。Weak
 ## class
 
 [ES6 class 实现继承](extends#class、extends-实现继承)
+
+
+## Reflect.ownKeys 与 Object.keys 的区别
+
+相同点：
+
+- 两个函数都是接受一个对象参数，并都是以数组形式返回对象属性的集合；
+- 而且参数都必须是对象，如果是其他乱麻七糟的类型，会报错；
+
+不同点：1、关于对象属性是否可枚举：
+
+- Object.keys()只能得到对象的可枚举属性，拿不到不可枚举属性；
+- Reflect.ownKeys()可以得到对象自己的所有属性，包括不可枚举属性；
+
+不同点：2、关于Symbol属性
+
+- Reflect.ownKeys()可以拿到对象的 Symbol 属性；
+- Object.keys()不行；
