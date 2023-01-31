@@ -559,21 +559,22 @@ module.exports = {
     optimization: {
         splitChunks: {
             chunks: 'async', // 有效值为 `all`，`async` 和 `initial`；
-                             // 设置为 all 可能特别强大，因为这意味着 chunk 可以在异步和非异步 chunk 之间共享
-            minSize: 20000,  // 生成 chunk 的最小体积（≈ 20kb)
+            // 设置为 all 可能特别强大，因为这意味着 chunk 可以在异步和非异步 chunk 之间共享
+            minSize: 20000, // 生成 chunk 的最小体积（≈ 20kb)
             minRemainingSize: 0, // 确保拆分后剩余的最小 chunk 体积超过限制来避免大小为零的模块
-            minChunks: 1,     // 拆分前必须共享模块的最小 chunks 数
+            minChunks: 1, // 拆分前必须共享模块的最小 chunks 数
             maxAsyncRequests: 30, // 按需加载时的最大并行请求数
             maxInitialRequests: 30, // 入口点的最大并行请求数
             enforceSizeThreshold: 50000, // 强制执行拆分的体积阈值，其他限制（minRemainingSize，maxAsyncRequests，maxInitialRequests）将被忽略。
-            cacheGroups: {         // 按模块层将模块分配给缓存组。
+            cacheGroups: {
+                // 按模块层将模块分配给缓存组。
                 // 配置提取模块的方案
                 defaultVendors: {
                     test: /[\/]node_modules[\/]/,
-                    priority: -10,  // 一个模块可以属于多个缓存组。优化将优先考虑具有更高 priority（优先级）的 缓存组，
-                                    // 默认组的优先级为负，以允许自定义组获得更高的优先级（自定义组的默认值为 0）
+                    priority: -10, // 一个模块可以属于多个缓存组。优化将优先考虑具有更高 priority（优先级）的 缓存组，
+                    // 默认组的优先级为负，以允许自定义组获得更高的优先级（自定义组的默认值为 0）
                     reuseExistingChunk: true, // 如果当前 chunk 包含已从主 bundle 中拆分出的模块，则它将被
-                                                // 重用，而不是生成新的模块。这可能会影响 chunk 的结果文件名。
+                    // 重用，而不是生成新的模块。这可能会影响 chunk 的结果文件名。
                 },
                 default: {
                     minChunks: 2,
@@ -646,6 +647,30 @@ module: {
     ]
 }
 ``` -->
+
+## path publicPath
+
+> output.path 和 output.publicPath
+
+`path` 是 `output` 目录对应一个`绝对路径`。
+
+`publicPath` 此选项指定`在浏览器中所引用的「此输出目录对应的公开 URL」`。对于按需加载(on-demand-load)或加载外部资源(external resources)（如图片、文件等）来说，`output.publicPath` 是很重要的选项。如果指定了一个错误的值，则在加载这些资源时会收到 404 错误。
+
+该选项的值是以 runtime(运行时) 或 loader(载入时) 所创建的每个 URL 的`前缀`。因此，在多数情况下，`此选项的值都会以 / 结束`。
+
+```js
+const path = require('path');
+
+module.exports = {
+    //...
+    output: {
+        path: path.resolve(__dirname, 'dist/assets'),
+
+        publicPath: 'https://cdn.example.com/assets/',
+    },
+};
+```
+
 
 ## bundle 分析
 
