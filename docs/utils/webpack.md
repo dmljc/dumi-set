@@ -434,9 +434,11 @@ import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 ```
 
+或者 使用 `moment-locales-webpack-plugin` 插件，`剔除掉无用的语言包`。
+
 ### externals
 
-`externals 从输出的 bundle 中排除依赖`。此功能通常对 library 开发人员来说是最有用的。
+`externals 从输出的 bundle 中排除依赖` 告诉 webpack 这些依赖是外部环境提供的，在打包时可以忽略它们，就不会再打到 chunk-vendors.js 中。此功能通常对 library 开发人员来说是最有用的。
 
 ```js
 externals: [
@@ -453,7 +455,19 @@ externals: [
         subtract: ['./math', 'subtract'],
     },
 ];
+
+// 在 index.html 中使用 CDN 引入依赖
+
+<body>
+    <script src="http://lib.baomitu.com/vue/2.6.14/react.min.js"></script>
+    <script src="http://lib.baomitu.com/vue-router/3.5.1/lodash.min.js"></script>
+</body>;
 ```
+
+### DllPlugin 动态链接库
+
+`DllPlugin` 与 `externals` 的作用相似，都是将依赖抽离出去，节约打包时间。区别是 DllPlugin 是将依赖单独打包，这样以后每次只构建业务代码，而 externals 是将依赖转化为 CDN 的方式引入。
+当公司没有很好的 CDN 资源或不支持 CDN 时，就可以考虑使用 DllPlugin ，替换掉 externals。
 
 <!-- ### DllPlugin
 
@@ -670,7 +684,6 @@ module.exports = {
     },
 };
 ```
-
 
 ## bundle 分析
 
