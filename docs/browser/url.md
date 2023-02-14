@@ -135,15 +135,17 @@ Strict-Transport-Security: max-age=15768000
 
 ## 浏览器解析渲染页面
 
-1. 解析 HTML，构建 DOM 树
+1. 解析 HTML，构建 DOM 树，同时浏览器主进程负责下载 CSS 文件。
 
-2. 解析 CSS，生成 CSS 规则树
+2. CSS 文件下载完成，解析 CSS 生成 CSS 规则树。
 
-3. 合并 DOM 树和 CSS 规则，生成 render 树
+3. 合并 DOM 树和 CSS 规则，生成 render 树。
 
-4. 布局 render 树（Layout/reflow），负责各元素尺寸、位置的计算
+4. 布局 render 树（Layout/reflow），负责各元素尺寸、位置的计算。
 
-5. 绘制 render 树（paint），绘制页面像素信息
+5. 绘制 render 树（paint），绘制页面像素信息。
+
+6. 浏览器主进程将默认的图层和复合图层交给 GPU 进程，GPU 进程再将各个图层合成，最后显示出页面。
 
 
 
