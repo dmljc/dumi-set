@@ -52,6 +52,8 @@ jsonp('http://xxx', 'callback', function (value) {
 });
 ```
 
+`除了 script 标签， link、img、iframe 等标签的请求也是允许跨域的。`
+
 ## CORS
 
 `CORS` 需要 `浏览器` 和 `后端`同时支持。IE 8 和 9 需要通过 `XDomainRequest` 来实现。
