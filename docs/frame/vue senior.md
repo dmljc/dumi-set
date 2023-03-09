@@ -5,6 +5,24 @@ order: 3
 
 # Vue 高级特性
 
+## 异步组件
+
+```js
+const AsyncComponent = () => ({
+    // 需要加载的组件 (应该是一个 `Promise` 对象)
+    component: import('./MyComponent.vue'),
+    // 异步组件加载时使用的组件
+    loading: LoadingComponent,
+    // 加载失败时使用的组件
+    error: ErrorComponent,
+    // 展示加载时组件的延时时间。默认值是 200 (毫秒)
+    delay: 200,
+    // 如果提供了超时时间且组件加载也超时了，
+    // 则使用加载失败时使用的组件。默认值是：`Infinity`
+    timeout: 3000,
+});
+```
+
 ## $nextTick
 
 因为 vue 是异步渲染，data 改变后 Dom 不会立即渲染，$nextTick 会在 Dom 渲染之后被触发 以获取最新的 Dom 节点。
@@ -64,10 +82,10 @@ Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将�
 
 原理
 
-- 在生成 ast 语法树时，遇到指令会给当前元素添加 directives 属性；
-- 通过 genDirectives 函数生成指令代码；
-- 在 patch 前将指令的钩子提取到 cbs 中，在 patch 过程中调用对应的钩子；
-- 当执行指令对应钩子函数时，调用对应指令定义的方法；
+-   在生成 ast 语法树时，遇到指令会给当前元素添加 directives 属性；
+-   通过 genDirectives 函数生成指令代码；
+-   在 patch 前将指令的钩子提取到 cbs 中，在 patch 过程中调用对应的钩子；
+-   当执行指令对应钩子函数时，调用对应指令定义的方法；
 
 ## keep-alive
 
@@ -75,9 +93,9 @@ Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将�
 是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在组件的父组件链中。
 当组件在 keep-alive 内被切换，它的 `activated` 和 `deactivated` 这两个生命周期钩子函数将会被对应执行。
 
-使用keep-alive包裹动态组件时，会对组件进行缓存，避免组件重新创建。
+使用 keep-alive 包裹动态组件时，会对组件进行缓存，避免组件重新创建。
 
-使用有两个场景：一个是动态组件（is），一个是router-view。
+使用有两个场景：一个是动态组件（is），一个是 router-view。
 
 ## mixin
 

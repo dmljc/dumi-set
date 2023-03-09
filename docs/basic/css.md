@@ -594,6 +594,20 @@ transform: matrix(0.866, 0.5, -0.5, 0.866, 0, 0);
 }
 ```
 
+### 绝对定位 + transform
+
+```js
+.father {
+    position: relative;
+}
+.son {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+```
+
 [在线预览 水平垂直居中](https://codepen.io/zhangfangchao/pen/wvwpBrZ)
 
 <h3>优缺点汇总</h3>
@@ -604,6 +618,7 @@ transform: matrix(0.866, 0.5, -0.5, 0.866, 0, 0);
 | 纯 flex 布局    | \*简单、方便 | 存在兼容性问题，其实对比过利弊之后，还是推荐 flex |
 | flex + margin   |  简单、方便  |                  存在兼容性问题                   |
 | 网格 布局       |   代码量少   |                  兼容性不如 flex                  |
+| 绝对定位 + transform       |   css3 新属性   |                  兼容性不是很好                  |
 
 ## 左右两栏布局
 

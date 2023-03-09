@@ -109,7 +109,7 @@ Strict-Transport-Security: max-age=15768000
 
 3. 合并 DOM 树和 CSS 规则，生成 render 树。
 
-4. 布局 render 树 （重拍），负责各元素尺寸、位置的计算。
+4. 布局 render 树 （重排），负责各元素尺寸、位置的计算。
 
 5. 绘制 render 树（重绘），绘制页面像素信息。
 
