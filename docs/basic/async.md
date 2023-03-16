@@ -54,9 +54,9 @@ let result3 = it.next();
 
 Promise 翻译过来就是承诺的意思，这个承诺会在未来有一个确切的答复，并且该承诺有三种状态，分别是：
 
--   等待中（pending）
--   完成了 （resolved）
--   拒绝了（rejected）
+-   `等待中 pending`
+-   `完成了 fulfilled`
+-   `拒绝了 rejected`
 
 这个承诺一旦从等待状态变成为其他状态就永远不能更改状态了，也就是说一旦状态变为 resolved 后，就不能再次改变。
 
@@ -67,6 +67,22 @@ new Promise((resolve, reject) => {
     reject('reject');
 });
 ```
+
+### Promise 常用的 api
+
+- `Promise.resolve(value)` 返回一个状态由给定 value 决定的 Promise 对象。
+- `Promise.reject(reason)` 返回一个状态为已拒绝的 Promise 对象，并将给定的失败信息传递给对应的处理函数。
+
+<br />
+
+- `Promise.all(iterable)` 返回一个新的 promise 对象，等到所有的 promise 对象都成功或有任意一个 promise 失败。
+- `Promise.any(iterable)` 接收一个 promise 对象的集合，当其中的任意一个 promise 成功，就返回那个成功的 promise 的值。
+
+<br />
+
+- `Promise.allSettled(iterable)` 等到所有 promise 都已敲定（每个 promise 都已兑现或已拒绝）。
+- `Promise.race(iterable)` 等到任意一个 promise 的状态变为已敲定。
+
 
 当我们在构造 `Promise` 的时候，`构造函数`内部的代码是`立即执行的`。
 
