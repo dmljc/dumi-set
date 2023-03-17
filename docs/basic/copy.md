@@ -223,7 +223,7 @@ function deepCopy(obj, map = new Map()) {
 ### 5.WeakMap 深拷贝
 
 ```js
-function deepCopy(obj, weakMap = new WeakMap()) {
+function deepCopy(obj, map = new WeakMap()) {
     if (typeof obj !== 'object') return obj;
 
     let newObj = Array.isArray(obj) ? [] : {};

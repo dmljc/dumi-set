@@ -135,7 +135,7 @@ new Promise((resolve, reject) => {
 -   然后开始下一轮 Event Loop，执行宏任务中的异步代码，也就是 setTimeout 中的回调函数
 -   所以以上代码虽然 `setTimeout` 写在 `Promise` 之前，但是因为 `Promise` 属于微任务而 `setTimeout` 属于宏任务，所以会有以上的打印。
 
-微任务包括 `promise` ，`process.nextTick` ，`MutationObserver`，其中 `process.nextTick` 为 Node 独有。
+微任务包括 `promise.then()` ，`process.nextTick` ，`MutationObserver`，其中 `process.nextTick` 为 Node 独有。
 
 宏任务包括 `script` ， `setTimeout` ，`setInterval` ，`setImmediate` ，I/O ，UI rendering。
 
